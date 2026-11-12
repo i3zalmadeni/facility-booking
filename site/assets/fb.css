@@ -229,3 +229,20 @@ a.moe{text-decoration:none;color:inherit}a.moe:hover b{color:var(--brand2)}
 @media (max-width:640px){header.dash .top{flex-wrap:wrap;row-gap:8px}header.dash .idl{width:100%;margin:0;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:8px}
  header.dash .idl .moe{display:flex}header.dash .idl .vdiv{display:none}header.dash .idl .sitelink,header.dash .idl .corelink{font-size:.88rem}}
 .dnav-in a{flex:none;white-space:nowrap}
+
+/* ===== ترويسة الموقع العام بتنسيق أنظمة النواة: الشعار، القائمة بحبة للصفحة الحالية، ثم النواة الرقمية ووزارة التعليم ===== */
+.pubsite header .top{gap:18px}
+.pubsite header .top nav{gap:6px;justify-content:center}
+.pubsite header nav a{padding:9px 18px!important;border-radius:14px!important;font-weight:600;color:var(--ink2)}
+.pubsite header nav a:hover{background:var(--soft)!important}
+.pubsite header nav a.on{background:var(--brandsoft)!important;color:var(--brand2);font-weight:800}
+.pubsite header nav a.on::after{display:none!important}
+.pubsite header nav a.only-m{display:none}
+.hid{display:flex;align-items:center;gap:14px;flex:none;order:3}
+.hcb{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.hcb .cn-ic{width:42px;height:42px;flex:none;transition:transform .4s}.hcb:hover .cn-ic{transform:rotate(-8deg) scale(1.06)}
+.hcb span{display:flex;flex-direction:column;line-height:1.25}.hcb b{font-size:1rem;font-weight:800}.hcb small{color:var(--muted);font-size:.72rem}
+.pubsite header .hid .moe{display:flex;order:0;padding-inline-start:14px}
+.bm .bm-ic{border-radius:13px}
+@media (max-width:1100px){.hcb span small{display:none}.pubsite header nav a{padding:9px 12px!important}}
+@media (max-width:860px){.hid{display:none}.pubsite header nav a.only-m{display:block}.pubsite header nav a{padding:11px 14px!important}}
