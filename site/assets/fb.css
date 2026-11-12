@@ -114,3 +114,5 @@ td input[type=time],td input[type=text],td input[type=number]{padding:6px 8px;mi
 .tdc{display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--ok);border-radius:18px;padding:13px 15px}
 .tdc.pending{border-inline-start-color:var(--gold)}.tdc-m b{display:block}.tdc-m small{color:var(--ink2);font-size:.84rem}
 .tdc em{color:var(--c4f)}.tdc.pending em{color:var(--c3f)}
+.st-f{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;font-weight:800;color:var(--ink)}.st-f .ico{width:14px;height:14px}
+.wd-bk em,.tdc-m b{font-weight:800}
