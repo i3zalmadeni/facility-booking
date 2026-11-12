@@ -15,7 +15,7 @@ const footerHTML = `<footer class="lab-foot"><div class="wrap lf"><div class="lf
 function bindNav() { const b = document.querySelector(".navtoggle"), n = document.querySelector("header nav"); if (b && n) b.onclick = () => { const o = n.classList.toggle("open"); b.setAttribute("aria-expanded", o); }; }
 
 // ===== الموقع العام: ترويسة (النواة يميناً، الصفحات وسطاً، شعار الوزارة يساراً) وديناميكية الصفحات =====
-const PUB_NAV = [["index.html", "الرئيسية", "home"], ["index.html#how", "كيف يعمل الحجز", "list"], ["index.html#roles", "الأدوار", "users"]];
+const PUB_NAV = [["index.html", "الرئيسية", "home"], ["bookings.html", "الحجوزات", "calendar"], ["about.html", "عن احجز مرفق", "info"]];
 const headMoe = '<span class="moe hm"><b>وزارة التعليم</b><small>Ministry of Education</small></span>';
 const pubHeader = (active) => `<header><div class="wrap top">${brandHTML("index.html")}<button class="navtoggle" aria-label="القائمة" aria-expanded="false">${ico("menu")}</button>
 <nav>${PUB_NAV.map(([h, n, i]) => `<a href="${h}" class="${h === active ? "on" : ""}" ${h === active ? 'aria-current="page"' : ""}>${ico(i)}${n}</a>`).join("")}<a href="login.html" data-login="1" class="${active === "login.html" ? "on" : ""}" ${active === "login.html" ? 'aria-current="page"' : ""}>${ico("grid")}لوحة التحكم</a></nav>${headMoe}</div></header>`;

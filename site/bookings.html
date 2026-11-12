@@ -1,0 +1,44 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الحجوزات – احجز مرفق</title><meta name="description" content="تقويم حجوزات مرافق متوسطة لبيد بن ربيعة باليوم والأسبوع"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/core.css"><link rel="stylesheet" href="assets/fb.css"></head><body class="pubsite">
+<div id="hdr"></div>
+<section class="hero3 slim"><div class="h3g"><div class="h3t"><span class="h3pill"><span class="tg" data-ico="calendar"></span>تقويم الحجوزات</span><h1><em>الحجوزات</em></h1><p class="h3p">اعرف المرافق المحجوزة والمتاحة قبل أن تحجز: باليوم حصةً حصة، وبالأسبوع يوماً يوماً.</p><div class="h3act"><a class="btn" href="book.html">احجز مرفقاً</a></div></div></div></section>
+<section class="hsec"><div class="wrap">
+<div class="calbar"><div class="tabs" id="vw"><button data-v="day" class="on">اليوم</button><button data-v="week">الأسبوع</button></div>
+<button class="btn sec sm" id="pv">السابق</button><input type="date" id="d" aria-label="التاريخ"><button class="btn sec sm" id="nx">التالي</button><button class="btn sec sm" id="td">اليوم</button><span class="sp"></span><span class="t" id="ttl"></span></div>
+<div id="cal"><p class="sub">جارٍ التحميل…</p></div>
+<div class="lgd dk"><span><i class="f"></i>متاح</span><span><i class="a"></i>محجوز</span><span><i class="p"></i>بانتظار الاعتماد</span></div>
+<p class="pubnote">يعرض التقويم العام حالة الحصة فقط. اسم الحاجز وتفاصيل الحجز تظهر بعد تسجيل الدخول.</p></div></section>
+<section class="hsec"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div></div><div class="facs wrap" id="fl"></div></section>
+<div id="ftr"></div>
+<script src="assets/config.js"></script><script src="assets/chrome.js"></script><script src="assets/about-icons.js"></script><script src="assets/pubfb.js"></script><script>
+pubInit("bookings.html");
+(function(){
+  const $=(i)=>document.getElementById(i), today=pToday(); let view="day", date=/^#\d{4}-\d\d-\d\d$/.test(location.hash)?location.hash.slice(1):today, C=null;
+  function draw(){
+    const F=C.facilities, P=C.periods, closed=(d)=>C.closed_weekdays.includes(pDow(d));
+    $("d").value=date;
+    document.querySelectorAll("#vw button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+    if(!F.length){$("cal").innerHTML='<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';$("ttl").textContent="";return;}
+    if(view==="day"){
+      $("ttl").textContent=pDay(date)+" · "+pHijri(date);
+      if(closed(date)){$("cal").innerHTML=`<div class="card"><b>${P_DAYS[pDow(date)]}</b><p class="sub" style="margin:4px 0 0">لا يُقبل الحجز في هذا اليوم.</p></div>`;return;}
+      const lbl={approved:"محجوز",pending:"بانتظار الاعتماد"};
+      $("cal").innerHTML=`<div class="tw card" style="padding:0"><table class="sch pubsch"><thead><tr><th>الحصة</th>${F.map(f=>`<th>${pesc(f.name)}</th>`).join("")}</tr></thead><tbody>${P.map(p=>p.bookable?`<tr class="${date===C.today&&p.starts<=C.now&&C.now<p.ends?"now":""}"><td><b>${pesc(p.name)}</b><br><small class="sub">${p.starts} – ${p.ends}</small></td>${F.map(f=>{const s=slotOf(C,date,f.id,p.id);return `<td><span class="st ${s||"free"}">${lbl[s]||"متاح"}</span></td>`;}).join("")}</tr>`:`<tr class="brkrow"><td colspan="${F.length+1}">${pesc(p.name)} · ${p.starts} – ${p.ends}</td></tr>`).join("")}</tbody></table></div>`;
+    } else {
+      const ws=pWeekStart(date); $("ttl").textContent=`${pShort(ws)} – ${pShort(pAdd(ws,6))}`;
+      $("cal").innerHTML=`<div class="week">${Array.from({length:7},(_,i)=>pAdd(ws,i)).filter(d=>!closed(d)).map(d=>{
+        const B=C.bookings.filter(b=>b.date===d), hd=`<span class="wd-h"><b>${P_DAYS[pDow(d)]}${d===C.today?" · اليوم":""}</b><small>${pShort(d)}</small></span>`;
+        if(closed(d)) return `<div class="wday closed">${hd}<span class="wd-e">لا دوام</span></div>`;
+        const per=F.map(f=>[f.name,B.filter(b=>b.facility_id===f.id).reduce((n,b)=>n+b.periods.length,0)]).filter(x=>x[1]);
+        return `<button type="button" class="wday${d===C.today?" wd-today":""}${B.length?" has":""}" data-d="${d}">${hd}${B.length?`<span class="wd-n">${B.length} <small>حجز</small></span><span class="wd-f">${per.map(([n,c])=>`<span>${pesc(n)} · ${c} حصة</span>`).join("")}</span>`:'<span class="wd-e">لا حجوزات، كل المرافق متاحة</span>'}</button>`;}).join("")}</div>`;
+    }
+  }
+  function load(){ const ws=pWeekStart(date); return pubCalendar(ws,pAdd(ws,6)).then(c=>{C=c;draw();$("fl").innerHTML=c.facilities.map(facCard).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';document.querySelectorAll("#fl .rv").forEach(e=>e.classList.add("in"));}).catch(()=>{$("cal").innerHTML='<p class="err">تعذر تحميل التقويم الآن. حاول بعد قليل.</p>';}); }
+  const go=(d)=>{date=d;history.replaceState(null,"","#"+d);load();};
+  $("vw").onclick=(e)=>{const b=e.target.closest("[data-v]");if(b){view=b.dataset.v;C&&draw();}};
+  $("pv").onclick=()=>go(pAdd(date,view==="day"?-1:-7)); $("nx").onclick=()=>go(pAdd(date,view==="day"?1:7)); $("td").onclick=()=>go(today);
+  $("d").onchange=(e)=>e.target.value&&go(e.target.value);
+  $("cal").onclick=(e)=>{const b=e.target.closest("[data-d]");if(b){view="day";go(b.dataset.d);}};
+  load();
+})();
+</script></body></html>
