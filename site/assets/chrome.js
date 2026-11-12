@@ -16,7 +16,7 @@ function bindNav() { const b = document.querySelector(".navtoggle"), n = documen
 
 // ===== الموقع العام: ترويسة (النواة يميناً، الصفحات وسطاً، شعار الوزارة يساراً) وديناميكية الصفحات =====
 const PUB_NAV = [["index.html", "الرئيسية", "home"], ["bookings.html", "الحجوزات", "calendar"], ["about.html", "عن احجز مرفق", "info"]];
-const headMoe = '<span class="moe hm"><b>وزارة التعليم</b><small>Ministry of Education</small></span>';
+const headMoe = '<a class="moe hm" href="https://moe.gov.sa" target="_blank" rel="noopener" title="موقع وزارة التعليم"><b>وزارة التعليم</b><small>Ministry of Education</small></a>';
 const pubHeader = (active) => `<header><div class="wrap top">${brandHTML("index.html")}<button class="navtoggle" aria-label="القائمة" aria-expanded="false">${ico("menu")}</button>
 <nav>${PUB_NAV.map(([h, n, i]) => `<a href="${h}" class="${h === active ? "on" : ""}" ${h === active ? 'aria-current="page"' : ""}>${ico(i)}${n}</a>`).join("")}<a href="login.html" data-login="1" class="${active === "login.html" ? "on" : ""}" ${active === "login.html" ? 'aria-current="page"' : ""}>${ico("grid")}لوحة التحكم</a></nav>${headMoe}</div></header>`;
 // شريط داكن لأقسام الصفحة الحالية (يُبنى من العناوين) مع تمييز القسم الظاهر أثناء التمرير

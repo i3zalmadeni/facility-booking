@@ -1,7 +1,7 @@
 /* إضافات «احجز مرفق» فوق هوية النواة الرقمية (core.css). لا تغيّر ألوان الهوية أو الترويسة. */
 .idl .vdiv{width:1px;align-self:stretch;min-height:30px;background:var(--line);flex:none}
 .idl .corelink{font-weight:800;color:var(--brand2);white-space:nowrap}
-@media (max-width:520px){.idl .vdiv,.idl .corelink{display:none}}
+
 .hj{color:var(--muted)}
 .badge.info{background:var(--c1b);color:var(--c1f)}
 
@@ -222,3 +222,10 @@ input[type=date]{min-width:0;max-width:100%}
 @media (min-width:900px){.pgrid2{grid-template-columns:repeat(4,1fr)}}
 .eqrow label small{color:var(--muted)}
 .fcd-x li>span:first-child{flex:none;white-space:nowrap}.fcd-x li .who{min-width:0;flex:0 1 auto}.fcd-x li .who-t strong{-webkit-line-clamp:1}
+
+/* ترويسة لوحة التحكم: الموقع الإلكتروني، الوزارة، النواة الرقمية (تظهر كلها حتى على الجوال) */
+a.moe{text-decoration:none;color:inherit}a.moe:hover b{color:var(--brand2)}
+.idl a.corelink{text-decoration:none}.idl a.corelink:hover{text-decoration:underline}
+@media (max-width:640px){header.dash .top{flex-wrap:wrap;row-gap:8px}header.dash .idl{width:100%;margin:0;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:8px}
+ header.dash .idl .moe{display:flex}header.dash .idl .vdiv{display:none}header.dash .idl .sitelink,header.dash .idl .corelink{font-size:.88rem}}
+.dnav-in a{flex:none;white-space:nowrap}

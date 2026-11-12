@@ -127,7 +127,7 @@ async function boot(page, render, o = {}) {
   const items = NAV.filter((n) => !n[4] || isMgr);
   const cur = NAV.find((n) => n[0] === page) || [page, "لوحة التحكم", "grid", ""];
   shell.innerHTML =
-    `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a>${headMoe}<span class="vdiv"></span><span class="corelink">النواة الرقمية</span></div></div>
+    `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a>${headMoe}<span class="vdiv"></span><a class="corelink" href="${esc(window.CORE_URL || "#")}" title="النواة الرقمية">النواة الرقمية</a></div></div>
      <div class="strip" aria-hidden="true"></div>
      <div class="dnav"><div class="wrap dn"><div class="dnav-in">${items.map(([h, n, e, t, , bd]) => `<a href="${h}" title="${esc(t)}" class="${h === page ? "on" : ""}" ${h === page ? 'aria-current="page"' : ""}>${ico(e)}${n}${bd ? `<span class="bdg" data-b="${bd}"></span>` : ""}</a>`).join("")}</div>
      <div class="dwho"><span class="dname">${esc(who.name)}</span><a class="loginbtn" href="#" id="out">خروج</a></div></div></div></header>
