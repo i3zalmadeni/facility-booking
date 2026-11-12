@@ -27,4 +27,27 @@ function nowPeriod(C) {
   if (nx) return { t: "التالي: " + nx.name, s: "next", sub: `تبدأ ${nx.starts}` };
   return { t: "انتهى اليوم الدراسي", s: "off" };
 }
-const facCard = (f) => `<div class="fac rv"><span class="fac-i">${ico("building")}</span><div><b>${pesc(f.name)}</b><small>${pesc([f.type, f.building].filter(Boolean).join(" · ") || "مرفق مدرسي")}</small></div>${f.capacity ? `<span class="fac-c">${ico("users")}${f.capacity}</span>` : ""}</div>`;
+const LBL = { approved: "محجوز", pending: "بانتظار الاعتماد" };
+const perOf = (C, b) => b.periods.map((id) => C.periods.find((p) => p.id === id)).filter(Boolean).sort((x, y) => (x.starts < y.starts ? -1 : 1));
+const facName = (C, id) => (C.facilities.find((f) => f.id === id) || {}).name || "";
+// بطاقة حجز كاملة: الشخص، المرفق، اليوم، الحصص وأوقاتها، الزوار والغرض
+function bkCard(C, b, showDate) {
+  const ps = perOf(C, b);
+  return `<article class="bkc ${b.status}"><div class="bkc-h">${whoHTML(b)}<span class="bkc-s">${LBL[b.status] || ""}</span></div>
+    <div class="bkc-f">${ico("building")}<b>${pesc(facName(C, b.facility_id))}</b></div>
+    ${showDate ? `<div class="bkc-r">${ico("calendar")}<span>${pDay(b.date)}</span></div>` : ""}
+    <div class="bkc-r">${ico("clock")}<span>${ps.length ? `${ps[0].starts} – ${ps[ps.length - 1].ends}` : "—"}</span></div>
+    <div class="bkc-p">${ps.map((p) => `<span>${pesc(p.name)}<small>${p.starts}</small></span>`).join("")}</div>
+    <div class="bkc-m">${b.visitors ? `<span>${ico("users")}${b.visitors} زائر</span>` : ""}${b.needs_help ? `<span>${ico("help")}بمساعدة المنسق</span>` : ""}</div>
+    ${b.purpose ? `<p class="bkc-n">${pesc(b.purpose)}</p>` : ""}</article>`;
+}
+// بطاقة مرفق: النوع والمبنى والسعة وحالته الآن وشريط حصص اليوم
+function facCard(f, C) {
+  const open = !C.closed_weekdays.includes(pDow(C.today)), P = C.periods.filter((p) => p.bookable);
+  const cur = open && P.find((p) => p.starts <= C.now && C.now < p.ends), busy = cur && slotOf(C, C.today, f.id, cur.id);
+  const free = open ? P.filter((p) => p.ends > C.now && !slotOf(C, C.today, f.id, p.id)).length : 0;
+  return `<article class="fcd"><div class="fcd-h"><span class="fcd-i">${ico("building")}</span><div><b>${pesc(f.name)}</b><small>${pesc(f.type || "مرفق مدرسي")}</small></div>${cur ? `<span class="fcd-s ${busy ? "busy" : "free"}">${busy ? "محجوز الآن" : "متاح الآن"}</span>` : ""}</div>
+    <div class="fcd-m">${f.building ? `<span>${ico("pin")}${pesc(f.building)}</span>` : ""}${f.capacity ? `<span>${ico("users")}يتسع ${f.capacity}</span>` : ""}</div>
+    <div class="fcd-b" aria-hidden="true">${P.map((p) => `<i class="${open ? slotOf(C, C.today, f.id, p.id) : ""}${cur && cur.id === p.id ? " cur" : ""}" title="${pesc(p.name)}"></i>`).join("")}</div>
+    <div class="fcd-f"><small>${open ? (free ? `${free} حصص متاحة اليوم` : "لا حصص متاحة اليوم") : "لا دوام اليوم"}</small><a href="book.html">احجز ${ico("arrow")}</a></div></article>`;
+}

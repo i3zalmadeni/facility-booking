@@ -10,17 +10,17 @@
 <section class="hsec" id="intro"><div class="intro rv"><div class="intro-top"><span class="intro-e" data-core></span><div><h3 id="in-t">—</h3><p id="in-p">حجز مرافق المدرسة بالحصة، بحساب النواة الرقمية نفسه.</p></div><div class="intro-l"><a class="btn sm" href="about.html">تعرّف على احجز مرفق</a><a class="btn sm sec" href="bookings.html">تقويم الحجوزات</a></div></div>
 <div class="nbar in-nb"><div class="nb"><span class="nb-i" data-ico="building"></span><b id="kF">0</b><small>مرفقاً متاحاً للحجز</small></div><div class="nb"><span class="nb-i" data-ico="check"></span><b id="kT">0</b><small>حجزاً اليوم</small></div><div class="nb"><span class="nb-i" data-ico="clock"></span><b id="kS">0</b><small>حصة متاحة اليوم</small></div><div class="nb"><span class="nb-i" data-ico="calendar"></span><b id="kW">0</b><small>حجزاً هذا الأسبوع</small></div></div></div></section>
 
-<section class="hsec" id="tdy" hidden><div class="hh rv"><div><small>اليوم</small><h2>حجوزات اليوم</h2></div><a href="bookings.html" class="hl-a">التقويم كاملاً <i data-ico="arrow"></i></a></div><div class="tdl wrap" id="tl"></div></section>
+<section class="hsec" id="tdy" hidden><div class="hh rv"><div><small>اليوم</small><h2>حجوزات اليوم</h2></div><a href="bookings.html" class="hl-a">التقويم كاملاً <i data-ico="arrow"></i></a></div><div class="bkcs wrap" id="tl"></div></section>
 
 <section class="hsec" id="how"><div class="hh rv"><div><small>الخطوات</small><h2>كيف تحجز</h2><p class="hh-d">أربع خطوات قصيرة من الدخول إلى استخدام المرفق.</p></div></div>
-<div class="pans howp rv">
-<div class="pan"><span class="pn-bg" data-ico="key"></span><span class="pi" data-ico="key"></span><b class="pt">سجّل دخولك</b><span class="ps">الخطوة 1</span><span class="pd">بمعرّف حسابك في النواة الرقمية، بلا حساب جديد.</span></div>
-<div class="pan"><span class="pn-bg" data-ico="calendar"></span><span class="pi" data-ico="calendar"></span><b class="pt">اختر المرفق والحصة</b><span class="ps">الخطوة 2</span><span class="pd">حدّد اليوم والمرفق، واختر من الحصص المتاحة.</span></div>
-<div class="pan"><span class="pn-bg" data-ico="tool"></span><span class="pi" data-ico="tool"></span><b class="pt">حدّد ما تحتاجه</b><span class="ps">الخطوة 3</span><span class="pd">عدد الزوار والأدوات، ومساعدة منسق المرفق إن لزم.</span></div>
-<div class="pan"><span class="pn-bg" data-ico="check"></span><span class="pi" data-ico="check"></span><b class="pt">يصلك القرار</b><span class="ps">الخطوة 4</span><span class="pd">يعتمد مسؤول المرفق الحجز، وتتابعه في حجوزاتي.</span></div></div></section>
+<ol class="tml rv">
+<li><span class="tml-n"><i data-ico="key"></i></span><b>سجّل دخولك</b><p>بمعرّف حسابك في النواة الرقمية، بلا حساب جديد.</p></li>
+<li><span class="tml-n"><i data-ico="calendar"></i></span><b>اختر المرفق والحصة</b><p>حدّد اليوم والمرفق، واختر من الحصص المتاحة.</p></li>
+<li><span class="tml-n"><i data-ico="tool"></i></span><b>حدّد ما تحتاجه</b><p>عدد الزوار والأدوات، ومساعدة منسق المرفق إن لزم.</p></li>
+<li><span class="tml-n"><i data-ico="check"></i></span><b>يصلك القرار</b><p>يعتمد مسؤول المرفق الحجز، وتتابعه في حجوزاتي.</p></li></ol></section>
 
 <section class="hsec" id="facs"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div><a href="bookings.html" class="hl-a">المحجوز والمتاح <i data-ico="arrow"></i></a></div>
-<div class="facs wrap" id="fl"></div></section>
+<div class="fcds wrap" id="fl"></div></section>
 
 <div class="ctab rv"><h2>جاهز لحجز مرفق؟</h2><p>سجّل دخولك بحساب النواة الرقمية وابدأ.</p><a class="btn gold" href="book.html">ابدأ الحجز</a></div>
 <div id="ftr"></div>
@@ -35,9 +35,8 @@ pubInit("index.html");
     const left=P.filter(p=>p.bookable&&p.ends>C.now).map(p=>p.id);
     $("kF").textContent=F.length; $("kT").textContent=T.length; $("kW").textContent=C.bookings.length;
     $("kS").textContent=open?Math.max(0,F.length*left.length-T.reduce((n,b)=>n+b.periods.filter(id=>left.includes(id)).length,0)):0;
-    $("tdy").hidden=!T.length; $("tl").innerHTML=T.map(b=>{const ps=b.periods.map(id=>P.find(p=>p.id===id)).filter(Boolean).sort((x,y)=>x.starts<y.starts?-1:1);return `<div class="tdc ${b.status}">${whoHTML(b)}<div class="tdc-m"><b>${pesc((F.find(f=>f.id===b.facility_id)||{}).name||"")}</b><small>${ps.map(p=>pesc(p.name)).join("، ")}${ps.length?` · ${ps[0].starts} – ${ps[ps.length-1].ends}`:""}</small></div><em>${b.status==="approved"?"محجوز":"بانتظار الاعتماد"}</em></div>`;}).join("");
-    $("fl").innerHTML=F.map(facCard).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';
-    document.querySelectorAll("#fl .rv").forEach(e=>e.classList.add("in"));
+    $("tdy").hidden=!T.length; $("tl").innerHTML=T.map(b=>bkCard(C,b)).join("");
+    $("fl").innerHTML=F.map(f=>facCard(f,C)).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';
   }
   const load=()=>pubCalendar(ws,pAdd(ws,6)).then(paint).catch(()=>{$("in-p").textContent="تعذر تحميل البيانات الآن.";});
   load(); setInterval(load,60000); document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
