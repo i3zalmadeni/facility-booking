@@ -1,65 +1,45 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>احجز مرفق – متوسطة لبيد بن ربيعة</title><meta name="description" content="حجز مرافق متوسطة لبيد بن ربيعة، أحد أنظمة النواة الرقمية"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/core.css"><link rel="stylesheet" href="assets/fb.css"></head><body class="pubsite">
 <div id="hdr"></div>
-<section class="hero3"><div class="h3g"><div class="h3t"><span class="h3pill"><span class="tg" data-ico="school"></span>أحد أنظمة النواة الرقمية · متوسطة لبيد بن ربيعة</span>
+<section class="hero3 hl"><div class="h3g"><div class="h3t"><span class="h3pill"><span class="tg" data-ico="school"></span>أحد أنظمة النواة الرقمية · متوسطة لبيد بن ربيعة</span>
 <h1><em>احجز</em> مرفق</h1>
-<div class="hnow"><span class="livepill" id="hDate"><span data-ico="calendar"></span><span>—</span></span><span class="livepill" id="hNow"><i></i><span>—</span></span></div>
-<p class="h3p">احجز معمل المدرسة أو مسرحها أو أي مرفق آخر لحصة أو أكثر، وحدّد عدد الزوار والأدوات التي تحتاجها، واطلب مساعدة منسق المرفق عند الحاجة، وتابع القرار من مكان واحد.</p>
+<p class="h3p">احجز معمل المدرسة أو مسرحها أو أي مرفق آخر لحصة أو أكثر، ويعتمد مسؤول المرفق طلبك، وترى المدرسة كلها جدولاً واحداً لا تعارض فيه.</p>
 <div class="h3act"><a class="btn" href="book.html">ابدأ الحجز</a><a class="btn ghost" href="bookings.html">تقويم الحجوزات</a></div></div>
-<div class="board" id="board" aria-live="polite"><h3>المرافق اليوم</h3><small id="bSub">جارٍ التحميل…</small><div id="bRows"></div>
-<div class="lgd"><span><i class="f"></i>متاح</span><span><i class="a"></i>محجوز</span><span><i class="p"></i>بانتظار الاعتماد</span></div></div></div></section>
+<div class="hlogo" aria-hidden="true"><span class="hr r1"></span><span class="hr r2"></span><span class="hg"></span><div class="hcore" data-core></div></div></div></section>
 
-<section class="hsec"><div class="grid wrap rv kstrip" id="kp">
-<div class="kpi"><div class="ic" data-ico="building"></div><div><b id="kF">—</b><span>مرفق متاح للحجز</span></div></div>
-<div class="kpi"><div class="ic" data-ico="check"></div><div><b id="kT">—</b><span>حجز اليوم</span></div></div>
-<div class="kpi"><div class="ic" data-ico="clock"></div><div><b id="kS">—</b><span>حصة متاحة اليوم</span></div></div>
-<div class="kpi"><div class="ic" data-ico="calendar"></div><div><b id="kW">—</b><span>حجز هذا الأسبوع</span></div></div></div></section>
+<section class="hsec" id="intro"><div class="intro rv"><div class="intro-top"><span class="intro-e" data-core></span><div><h3 id="in-t">—</h3><p id="in-p">حجز مرافق المدرسة بالحصة، بحساب النواة الرقمية نفسه.</p></div><div class="intro-l"><a class="btn sm" href="about.html">تعرّف على احجز مرفق</a><a class="btn sm sec" href="bookings.html">تقويم الحجوزات</a></div></div>
+<div class="nbar in-nb"><div class="nb"><span class="nb-i" data-ico="building"></span><b id="kF">0</b><small>مرفقاً متاحاً للحجز</small></div><div class="nb"><span class="nb-i" data-ico="check"></span><b id="kT">0</b><small>حجزاً اليوم</small></div><div class="nb"><span class="nb-i" data-ico="clock"></span><b id="kS">0</b><small>حصة متاحة اليوم</small></div><div class="nb"><span class="nb-i" data-ico="calendar"></span><b id="kW">0</b><small>حجزاً هذا الأسبوع</small></div></div></div></section>
 
-<section class="hsec" id="tdy" hidden><div class="hh rv"><div><small>اليوم</small><h2>حجوزات اليوم</h2></div></div><div class="tdl wrap" id="tl"></div></section>
+<section class="hsec" id="tdy" hidden><div class="hh rv"><div><small>اليوم</small><h2>حجوزات اليوم</h2></div><a href="bookings.html" class="hl-a">التقويم كاملاً <i data-ico="arrow"></i></a></div><div class="tdl wrap" id="tl"></div></section>
 
-<section class="hsec" id="week"><div class="hh rv"><div><small>هذا الأسبوع</small><h2>أيام الحجز</h2><p class="hh-d">اضغط اليوم لعرض حصصه ومرافقه المحجوزة.</p></div><a class="btn sec" href="bookings.html">التقويم كاملاً</a></div>
-<div class="week wrap rv" id="wk"></div></section>
+<section class="hsec" id="how"><div class="hh rv"><div><small>الخطوات</small><h2>كيف تحجز</h2><p class="hh-d">أربع خطوات قصيرة من الدخول إلى استخدام المرفق.</p></div></div>
+<div class="pans howp rv">
+<div class="pan"><span class="pn-bg" data-ico="key"></span><span class="pi" data-ico="key"></span><b class="pt">سجّل دخولك</b><span class="ps">الخطوة 1</span><span class="pd">بمعرّف حسابك في النواة الرقمية، بلا حساب جديد.</span></div>
+<div class="pan"><span class="pn-bg" data-ico="calendar"></span><span class="pi" data-ico="calendar"></span><b class="pt">اختر المرفق والحصة</b><span class="ps">الخطوة 2</span><span class="pd">حدّد اليوم والمرفق، واختر من الحصص المتاحة.</span></div>
+<div class="pan"><span class="pn-bg" data-ico="tool"></span><span class="pi" data-ico="tool"></span><b class="pt">حدّد ما تحتاجه</b><span class="ps">الخطوة 3</span><span class="pd">عدد الزوار والأدوات، ومساعدة منسق المرفق إن لزم.</span></div>
+<div class="pan"><span class="pn-bg" data-ico="check"></span><span class="pi" data-ico="check"></span><b class="pt">يصلك القرار</b><span class="ps">الخطوة 4</span><span class="pd">يعتمد مسؤول المرفق الحجز، وتتابعه في حجوزاتي.</span></div></div></section>
 
-<section class="hsec" id="facs"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2><p class="hh-d">تُفعَّل المرافق للحجز من مدير النواة الرقمية، وبياناتها من سجل المرافق في النواة.</p></div></div>
+<section class="hsec" id="facs"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div><a href="bookings.html" class="hl-a">المحجوز والمتاح <i data-ico="arrow"></i></a></div>
 <div class="facs wrap" id="fl"></div></section>
 
-<section class="hsec" id="how"><div class="hh rv"><div><small>الخطوات</small><h2>كيف يعمل الحجز</h2><p class="hh-d">أربع خطوات قصيرة، وبحساب النواة الرقمية نفسه.</p></div><a class="btn sec" href="about.html">عن احجز مرفق</a></div>
-<div class="steps rv wrap">
-<div class="card"><b>سجّل دخولك</b>بمعرّف حسابك في النواة الرقمية. الحساب نفسه الذي تدخل به بقية أنظمة المدرسة.</div>
-<div class="card"><b>اختر اليوم والمرفق والحصص</b>تظهر لك الحصص المتاحة والمحجوزة في ذلك اليوم، فتختار ما يناسبك.</div>
-<div class="card"><b>حدّد الزوار والأدوات</b>اكتب عدد الزوار، واختر الأدوات التي تحتاجها من تجهيزات المرفق، واطلب مساعدة المنسق إن لزم.</div>
-<div class="card"><b>يصلك القرار</b>يعتمد منسق المرفق الحجز أو يعتذر مع السبب، وتجد الحالة في صفحة حجوزاتي.</div></div></section>
-
-<section class="hsec" id="roles"><div class="hh rv"><div><small>الأدوار</small><h2>من يفعل ماذا</h2></div></div>
-<div class="grid wrap rv">
-<div class="card reg"><div class="ic k0"><span data-ico="user"></span></div><div><b>المعلم</b><small>يحجز المرافق المفتوحة للحجز، ويتابع حجوزاته ويلغيها قبل موعدها.</small></div></div>
-<div class="card reg"><div class="ic k3"><span data-ico="inbox"></span></div><div><b>منسق المرفق</b><small>هو المسؤول عن المرفق في سجل المرافق بالنواة. يعتمد طلبات مرفقه ويرى جدوله وإحصاءاته.</small></div></div>
-<div class="card reg"><div class="ic k2"><span data-ico="gear"></span></div><div><b>مدير النواة الرقمية</b><small>يفعّل المرافق للحجز، ويضبط أزمنة الحصص وقواعد الحجز، ويتابع إحصاءات كل المرافق.</small></div></div></div></section>
-
-<div class="ctab rv wrap"><h2>جاهز لحجز مرفق؟</h2><p>سجّل دخولك بحساب النواة الرقمية وابدأ.</p><a class="btn gold" href="book.html">ابدأ الحجز</a></div>
+<div class="ctab rv"><h2>جاهز لحجز مرفق؟</h2><p>سجّل دخولك بحساب النواة الرقمية وابدأ.</p><a class="btn gold" href="book.html">ابدأ الحجز</a></div>
 <div id="ftr"></div>
 <script src="assets/config.js"></script><script src="assets/chrome.js"></script><script src="assets/about-icons.js"></script><script src="assets/pubfb.js"></script><script>
 pubInit("index.html");
 (function(){
   const $=(i)=>document.getElementById(i), today=pToday(), ws=pWeekStart(today);
-  $("hDate").lastElementChild.textContent=pDay(today)+" · "+pHijri(today);
-  const num=(el,n)=>{el.dataset.count=n;el.textContent=n;};
+  $("in-t").textContent=pDay(today)+" · "+pHijri(today);
   function paint(C){
-    const np=nowPeriod(C), hn=$("hNow"); hn.className="livepill "+np.s; hn.lastElementChild.innerHTML=pesc(np.t)+(np.sub?` <small>${pesc(np.sub)}</small>`:"");
-    const F=C.facilities, P=C.periods, T=C.bookings.filter(b=>b.date===C.today), open=!C.closed_weekdays.includes(pDow(C.today));
-    const cur=P.find(p=>p.starts<=C.now&&C.now<p.ends);
-    $("bSub").textContent=F.length?(open?"كل شريط حصة، من الأولى إلى الأخيرة":"لا دوام اليوم"):"لم تُفعَّل مرافق للحجز بعد";
-    $("bRows").innerHTML=F.slice(0,7).map(f=>`<div class="brow"><b title="${pesc(f.name)}">${pesc(f.name)}</b><span class="dots2">${P.map(p=>`<i class="${p.bookable?slotOf(C,C.today,f.id,p.id):"brk"}${cur&&cur.id===p.id?" cur":""}" title="${pesc(p.name)} ${p.starts}–${p.ends}${(bookOf(C,C.today,f.id,p.id)||{}).booker?" · "+pesc(bookOf(C,C.today,f.id,p.id).booker):""}"></i>`).join("")}</span></div>`).join("")+(F.length>7?`<small style="display:block;margin-top:10px;opacity:.8">و${F.length-7} مرافق أخرى في <a href="bookings.html" style="color:#fff;text-decoration:underline">تقويم الحجوزات</a></small>`:"");
-    const slots=P.filter(p=>p.bookable), taken=T.reduce((n,b)=>n+b.periods.length,0);
-    num($("kF"),F.length); num($("kT"),T.length); num($("kS"),open?Math.max(0,F.length*slots.filter(p=>p.ends>C.now).length-T.reduce((n,b)=>n+b.periods.filter(id=>(P.find(p=>p.id===id)||{}).ends>C.now).length,0)):0); num($("kW"),C.bookings.length);
-    $("wk").innerHTML=Array.from({length:7},(_,i)=>pAdd(ws,i)).filter(d=>!C.closed_weekdays.includes(pDow(d))).map(d=>{
-      const B=C.bookings.filter(b=>b.date===d), names=[...new Set(B.map(b=>(F.find(f=>f.id===b.facility_id)||{}).name).filter(Boolean))];
-      return `<a class="wday${d===C.today?" wd-today":""}${B.length?" has":""}" href="bookings.html#${d}"><span class="wd-h"><b>${P_DAYS[pDow(d)]}${d===C.today?" · اليوم":""}</b><small>${pShort(d)}</small></span>${B.length?`<span class="wd-n">${B.length} <small>حجز · ${B.reduce((n,b)=>n+b.periods.length,0)} حصة</small></span><span class="wd-f">${names.slice(0,4).map(n=>`<span>${pesc(n)}</span>`).join("")}${names.length>4?`<span>+${names.length-4}</span>`:""}</span>`:'<span class="wd-e">لا حجوزات، كل المرافق متاحة</span>'}</a>`;}).join("");
+    const F=C.facilities, P=C.periods, T=C.bookings.filter(b=>b.date===C.today), open=!C.closed_weekdays.includes(pDow(C.today)), np=nowPeriod(C);
+    $("in-p").textContent=np.t+(np.sub?"، "+np.sub:"")+".";
+    const left=P.filter(p=>p.bookable&&p.ends>C.now).map(p=>p.id);
+    $("kF").textContent=F.length; $("kT").textContent=T.length; $("kW").textContent=C.bookings.length;
+    $("kS").textContent=open?Math.max(0,F.length*left.length-T.reduce((n,b)=>n+b.periods.filter(id=>left.includes(id)).length,0)):0;
     $("tdy").hidden=!T.length; $("tl").innerHTML=T.map(b=>{const ps=b.periods.map(id=>P.find(p=>p.id===id)).filter(Boolean).sort((x,y)=>x.starts<y.starts?-1:1);return `<div class="tdc ${b.status}">${whoHTML(b)}<div class="tdc-m"><b>${pesc((F.find(f=>f.id===b.facility_id)||{}).name||"")}</b><small>${ps.map(p=>pesc(p.name)).join("، ")}${ps.length?` · ${ps[0].starts} – ${ps[ps.length-1].ends}`:""}</small></div><em>${b.status==="approved"?"محجوز":"بانتظار الاعتماد"}</em></div>`;}).join("");
     $("fl").innerHTML=F.map(facCard).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';
     document.querySelectorAll("#fl .rv").forEach(e=>e.classList.add("in"));
   }
-  const load=()=>pubCalendar(ws,pAdd(ws,6)).then(paint).catch(()=>{$("bSub").textContent="تعذر تحميل البيانات الآن.";});
+  const load=()=>pubCalendar(ws,pAdd(ws,6)).then(paint).catch(()=>{$("in-p").textContent="تعذر تحميل البيانات الآن.";});
   load(); setInterval(load,60000); document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
 })();
 </script></body></html>
