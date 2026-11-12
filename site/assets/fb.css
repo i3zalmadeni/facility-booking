@@ -1,0 +1,65 @@
+/* إضافات «احجز مرفق» فوق هوية النواة الرقمية (core.css). لا تغيّر ألوان الهوية أو الترويسة. */
+.idl .vdiv{width:1px;align-self:stretch;min-height:30px;background:var(--line);flex:none}
+.idl .corelink{font-weight:800;color:var(--brand2);white-space:nowrap}
+@media (max-width:520px){.idl .vdiv,.idl .corelink{display:none}}
+.hj{color:var(--muted)}
+.badge.info{background:var(--c1b);color:var(--c1f)}
+
+/* بطاقة الحجز */
+.bk{border-radius:18px;padding:14px 16px;border-inline-start:5px solid var(--line)}
+.bk.s-pending{border-inline-start-color:var(--gold)}.bk.s-approved{border-inline-start-color:var(--ok)}.bk.s-rejected{border-inline-start-color:var(--bad)}.bk.s-cancelled{opacity:.72}
+.pchips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+.pchip{background:var(--brandsoft);color:var(--brand2);border-radius:99px;padding:3px 12px;font-size:.84rem;font-weight:700}.pchip small{font-weight:500;color:var(--ink2)}
+.bk-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;color:var(--ink2);font-size:.88rem}
+.bk-meta span{display:inline-flex;align-items:center;gap:6px}.bk-meta .ico{width:16px;height:16px}
+.bk-n{margin:6px 0 0;font-size:.9rem}.bk-n small{color:var(--muted)}
+.btn .ico{width:16px;height:16px}
+
+/* شبكة الحصص في نموذج الحجز */
+.pgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pbtn{display:flex;flex-direction:column;gap:2px;text-align:start;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
+.pbtn b{font-weight:800}.pbtn small{color:var(--ink2)}.pbtn em{font-style:normal;font-size:.76rem;color:var(--muted)}
+.pbtn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--brand)}
+.pbtn.on{background:var(--grad);color:#fff;border-color:transparent}.pbtn.on small,.pbtn.on em{color:rgba(255,255,255,.9)}
+.pbtn:disabled{cursor:not-allowed;background:var(--soft);color:var(--muted)}
+.pbtn.taken{background:var(--c5b);color:var(--c5f);border-color:transparent}.pbtn.taken small,.pbtn.taken em{color:var(--c5f)}
+.pbtn.wait{background:var(--c3b);color:var(--c3f);border-color:transparent}.pbtn.wait small,.pbtn.wait em{color:var(--c3f)}
+.pbtn.brk{background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 8px,var(--surface) 8px,var(--surface) 16px)}
+
+.fcard{background:var(--soft);border-radius:16px;padding:12px 14px;margin-top:10px;font-size:.9rem;color:var(--ink2)}
+.fcard b{color:var(--ink)}
+.fcard .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.fcard .meta span{background:var(--surface);border-radius:99px;padding:2px 10px;font-size:.8rem}
+.eqrow{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--surface)}
+.eqrow label{display:flex;align-items:center;gap:8px;margin:0;flex:1;font-size:.95rem;color:var(--ink)}
+.eqrow input[type=checkbox]{width:18px;height:18px;flex:none}.eqrow input[type=number]{width:84px}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;margin:0!important}.sw input{width:20px;height:20px;flex:none}
+.sumbar{position:sticky;bottom:10px;z-index:5;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:20px;padding:12px 18px;box-shadow:var(--shadow2);margin-top:18px}
+.sumbar .s{font-size:.92rem;color:#cfe3e8}.sumbar b{color:#fff}.sumbar .btn{background:var(--grad)}.sumbar .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* جدول المرافق اليومي */
+.sch{width:100%;border-collapse:separate;border-spacing:0}
+.sch th,.sch td{vertical-align:top;border-bottom:1px solid var(--line);border-inline-start:1px solid var(--line);min-width:150px}
+.sch th:first-child,.sch td:first-child{min-width:130px;position:sticky;inset-inline-start:0;background:var(--soft);z-index:1}
+.sch tr.brkrow td{background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 8px,var(--surface) 8px,var(--surface) 16px);color:var(--muted);text-align:center;padding:4px}
+.cell{display:block;width:100%;text-align:start;border:0;border-radius:12px;padding:8px 10px;font:inherit;cursor:pointer;background:var(--c4b);color:var(--c4f);font-size:.85rem}
+.cell.pending{background:var(--c3b);color:var(--c3f)}.cell small{display:block;opacity:.85}
+.cell:hover{filter:brightness(.97)}.cellfree{color:var(--muted);font-size:.8rem}
+.datebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.datebar input{width:auto}.datebar .t{font-weight:800;color:var(--brand2)}
+
+/* إحصائيات وإعدادات */
+.rank{display:grid;grid-template-columns:28px 1fr auto;gap:2px 12px;align-items:center;margin-top:12px}
+.rank .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--brandsoft);color:var(--brand2);font-weight:800;font-size:.85rem}
+.rank .n.g{background:linear-gradient(135deg,#f6c25e,#eaa83a);color:#3b2a06}
+.rank .v{font-weight:800;color:var(--brand2)}.rank .track{grid-column:2/-1;height:7px;border-radius:99px;background:var(--soft);overflow:hidden}.rank .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#18a4ab,#f0b34a)}
+.rank small{color:var(--ink2)}
+.tgl{position:relative;display:inline-block;width:44px;height:24px;flex:none}.tgl input{opacity:0;width:0;height:0}
+.tgl span{position:absolute;inset:0;background:var(--line);border-radius:99px;cursor:pointer;transition:background .2s}
+.tgl span::before{content:"";position:absolute;inset-block-start:3px;inset-inline-start:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tgl input:checked+span{background:var(--brand)}.tgl input:checked+span::before{transform:translateX(-20px)}
+.tgl input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+td input[type=time],td input[type=text],td input[type=number]{padding:6px 8px;min-width:110px}
+.chk{display:inline-flex;align-items:center;gap:6px;margin:0 0 6px 14px;font-size:.92rem;color:var(--ink)}.chk input{width:18px;height:18px}
+.note{background:var(--c1b);color:var(--c1f);border-radius:14px;padding:10px 14px;margin:0 0 14px;font-size:.9rem}
+.stepcard{display:flex;gap:12px;align-items:flex-start}
+@media print{.sumbar,.bar,.datebar .btn{display:none}}
+.sumbar .s{flex:1 1 280px;min-width:0}
