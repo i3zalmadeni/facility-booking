@@ -5,12 +5,15 @@
 <h1><em>احجز</em> مرفق</h1>
 <p class="h3p">احجز معمل المدرسة أو مسرحها أو أي مرفق آخر لحصة أو أكثر، ويعتمد مسؤول المرفق طلبك، وترى المدرسة كلها جدولاً واحداً لا تعارض فيه.</p>
 <div class="h3act"><a class="btn" href="book.html">ابدأ الحجز</a><a class="btn ghost" href="bookings.html">تقويم الحجوزات</a></div></div>
-<div class="hlogo" aria-hidden="true"><span class="hr r1"></span><span class="hr r2"></span><span class="hg"></span><div class="hcore" data-core></div></div></div></section>
+<div class="hart" aria-hidden="true"><div class="ha-card"><div class="ha-top"><i></i><i></i><i></i></div><div class="ha-grid"><i class=""></i><i class="a"></i><i class=""></i><i class=""></i><i class="p"></i><i class=""></i><i class="a"></i><i class="a"></i><i class=""></i><i class=""></i><i class=""></i><i class="a"></i><i class=""></i><i class=""></i><i class="p"></i><i class=""></i></div></div><div class="ha-mark" data-core></div><span class="ha-chip c1"><span data-ico="check"></span>محجوز</span><span class="ha-chip c2"><span data-ico="clock"></span>الحصة الثالثة</span></div></div></section>
 
 <section class="hsec" id="intro"><div class="intro rv"><div class="intro-top"><span class="intro-e" data-core></span><div><h3 id="in-t">—</h3><p id="in-p">حجز مرافق المدرسة بالحصة، بحساب النواة الرقمية نفسه.</p></div><div class="intro-l"><a class="btn sm" href="about.html">تعرّف على احجز مرفق</a><a class="btn sm sec" href="bookings.html">تقويم الحجوزات</a></div></div>
 <div class="nbar in-nb"><div class="nb"><span class="nb-i" data-ico="building"></span><b id="kF">0</b><small>مرفقاً متاحاً للحجز</small></div><div class="nb"><span class="nb-i" data-ico="check"></span><b id="kT">0</b><small>حجزاً اليوم</small></div><div class="nb"><span class="nb-i" data-ico="clock"></span><b id="kS">0</b><small>حصة متاحة اليوم</small></div><div class="nb"><span class="nb-i" data-ico="calendar"></span><b id="kW">0</b><small>حجزاً هذا الأسبوع</small></div></div></div></section>
 
 <section class="hsec" id="tdy" hidden><div class="hh rv"><div><small>اليوم</small><h2>حجوزات اليوم</h2></div><a href="bookings.html" class="hl-a">التقويم كاملاً <i data-ico="arrow"></i></a></div><div class="bkcs wrap" id="tl"></div></section>
+
+<section class="hsec" id="facs"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div><a href="bookings.html" class="hl-a">المحجوز والمتاح <i data-ico="arrow"></i></a></div>
+<div class="wrap"><div class="fchips" id="fch"></div><div class="fcds" id="fl"></div></div></section>
 
 <section class="hsec" id="how"><div class="hh rv"><div><small>الخطوات</small><h2>كيف تحجز</h2><p class="hh-d">أربع خطوات قصيرة من الدخول إلى استخدام المرفق.</p></div></div>
 <ol class="tml rv">
@@ -18,9 +21,6 @@
 <li><span class="tml-n"><i data-ico="calendar"></i></span><b>اختر المرفق والحصة</b><p>حدّد اليوم والمرفق، واختر من الحصص المتاحة.</p></li>
 <li><span class="tml-n"><i data-ico="tool"></i></span><b>حدّد ما تحتاجه</b><p>عدد الزوار والأدوات، ومساعدة منسق المرفق إن لزم.</p></li>
 <li><span class="tml-n"><i data-ico="check"></i></span><b>يصلك القرار</b><p>يعتمد مسؤول المرفق الحجز، وتتابعه في حجوزاتي.</p></li></ol></section>
-
-<section class="hsec" id="facs"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div><a href="bookings.html" class="hl-a">المحجوز والمتاح <i data-ico="arrow"></i></a></div>
-<div class="fcds wrap" id="fl"></div></section>
 
 <div class="ctab rv"><h2>جاهز لحجز مرفق؟</h2><p>سجّل دخولك بحساب النواة الرقمية وابدأ.</p><a class="btn gold" href="book.html">ابدأ الحجز</a></div>
 <div id="ftr"></div>
@@ -36,7 +36,7 @@ pubInit("index.html");
     $("kF").textContent=F.length; $("kT").textContent=T.length; $("kW").textContent=C.bookings.length;
     $("kS").textContent=open?Math.max(0,F.length*left.length-T.reduce((n,b)=>n+b.periods.filter(id=>left.includes(id)).length,0)):0;
     $("tdy").hidden=!T.length; $("tl").innerHTML=T.map(b=>bkCard(C,b)).join("");
-    $("fl").innerHTML=F.map(f=>facCard(f,C)).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';
+    facSection($("fl"),$("fch"),C);
   }
   const load=()=>pubCalendar(ws,pAdd(ws,6)).then(paint).catch(()=>{$("in-p").textContent="تعذر تحميل البيانات الآن.";});
   load(); setInterval(load,60000); document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});

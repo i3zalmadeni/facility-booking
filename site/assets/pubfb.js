@@ -41,13 +41,29 @@ function bkCard(C, b, showDate) {
     <div class="bkc-m">${b.visitors ? `<span>${ico("users")}${b.visitors} زائر</span>` : ""}${b.needs_help ? `<span>${ico("help")}بمساعدة المنسق</span>` : ""}</div>
     ${b.purpose ? `<p class="bkc-n">${pesc(b.purpose)}</p>` : ""}</article>`;
 }
-// بطاقة مرفق: النوع والمبنى والسعة وحالته الآن وشريط حصص اليوم
+// قسم المرافق التفاعلي: فرز بالنوع، وبطاقة تُفتح على حصص اليوم ومن حجزها
+const FAC_UI = { type: "", open: new Set(), bound: new WeakSet() };
 function facCard(f, C) {
   const open = !C.closed_weekdays.includes(pDow(C.today)), P = C.periods.filter((p) => p.bookable);
   const cur = open && P.find((p) => p.starts <= C.now && C.now < p.ends), busy = cur && slotOf(C, C.today, f.id, cur.id);
-  const free = open ? P.filter((p) => p.ends > C.now && !slotOf(C, C.today, f.id, p.id)).length : 0;
-  return `<article class="fcd"><div class="fcd-h"><span class="fcd-i">${ico("building")}</span><div><b>${pesc(f.name)}</b><small>${pesc(f.type || "مرفق مدرسي")}</small></div>${cur ? `<span class="fcd-s ${busy ? "busy" : "free"}">${busy ? "محجوز الآن" : "متاح الآن"}</span>` : ""}</div>
+  const free = open ? P.filter((p) => p.ends > C.now && !slotOf(C, C.today, f.id, p.id)).length : 0, isOpen = FAC_UI.open.has(f.id);
+  const rows = P.map((p) => { const b = bookOf(C, C.today, f.id, p.id), past = p.ends <= C.now; return `<li class="${b ? b.status : past ? "past" : "free"}${cur && cur.id === p.id ? " cur" : ""}"><span><b>${pesc(p.name)}</b><small>${p.starts} – ${p.ends}</small></span>${b ? whoHTML(b) : `<em>${past ? "انتهت" : "متاحة"}</em>`}</li>`; }).join("");
+  return `<article class="fcd${isOpen ? " open" : ""}" data-fid="${f.id}"><button type="button" class="fcd-t" aria-expanded="${isOpen}"><div class="fcd-h"><span class="fcd-i">${ico("building")}</span><div><b>${pesc(f.name)}</b><small>${pesc(f.type || "مرفق مدرسي")}</small></div>${cur ? `<span class="fcd-s ${busy ? "busy" : "free"}"><i></i>${busy ? "محجوز الآن" : "متاح الآن"}</span>` : ""}</div>
     <div class="fcd-m">${f.building ? `<span>${ico("pin")}${pesc(f.building)}</span>` : ""}${f.capacity ? `<span>${ico("users")}يتسع ${f.capacity}</span>` : ""}</div>
-    <div class="fcd-b" aria-hidden="true">${P.map((p) => `<i class="${open ? slotOf(C, C.today, f.id, p.id) : ""}${cur && cur.id === p.id ? " cur" : ""}" title="${pesc(p.name)}"></i>`).join("")}</div>
-    <div class="fcd-f"><small>${open ? (free ? `${free} حصص متاحة اليوم` : "لا حصص متاحة اليوم") : "لا دوام اليوم"}</small><a href="book.html">احجز ${ico("arrow")}</a></div></article>`;
+    <div class="fcd-b" aria-hidden="true">${P.map((p) => `<i class="${open ? slotOf(C, C.today, f.id, p.id) : ""}${cur && cur.id === p.id ? " cur" : ""}"></i>`).join("")}</div>
+    <div class="fcd-f"><small>${open ? (free ? `${free} حصص متاحة اليوم` : "لا حصص متاحة اليوم") : "لا دوام اليوم"}</small><span class="fcd-more">حصص اليوم ${ico("up")}</span></div></button>
+    <div class="fcd-x"><div><ul>${open ? rows : '<li class="past"><span><b>لا دوام اليوم</b></span></li>'}</ul><a class="btn sm" href="book.html">احجز هذا المرفق</a></div></div></article>`;
+}
+function facSection(list, chips, C) {
+  const types = [...new Set(C.facilities.map((f) => f.type).filter(Boolean))];
+  if (FAC_UI.type && !types.includes(FAC_UI.type)) FAC_UI.type = "";
+  if (chips) chips.innerHTML = types.length > 1 ? [["", "الكل", C.facilities.length], ...types.map((t) => [t, t, C.facilities.filter((f) => f.type === t).length])].map(([v, l, n]) => `<button type="button" data-ft="${pesc(v)}" class="${v === FAC_UI.type ? "on" : ""}">${pesc(l)}<b>${n}</b></button>`).join("") : "";
+  const F = C.facilities.filter((f) => !FAC_UI.type || f.type === FAC_UI.type);
+  list.innerHTML = F.map((f) => facCard(f, C)).join("") || '<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';
+  list._C = C;
+  if (!FAC_UI.bound.has(list)) { FAC_UI.bound.add(list);
+    list.addEventListener("click", (e) => { const t = e.target.closest(".fcd-t"); if (!t) return; const a = t.closest(".fcd"), id = a.dataset.fid, on = !a.classList.contains("open"); a.classList.toggle("open", on); t.setAttribute("aria-expanded", on); on ? FAC_UI.open.add(id) : FAC_UI.open.delete(id); });
+    list.addEventListener("pointermove", (e) => { const a = e.target.closest(".fcd"); if (!a) return; const r = a.getBoundingClientRect(); a.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%"); a.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%"); });
+    if (chips) chips.addEventListener("click", (e) => { const b = e.target.closest("[data-ft]"); if (!b) return; FAC_UI.type = b.dataset.ft; facSection(list, chips, list._C); });
+  }
 }

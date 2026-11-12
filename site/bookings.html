@@ -11,7 +11,7 @@
 <button class="btn sec sm" id="clr" hidden>إلغاء الفرز</button><span class="sp"></span><span class="cnt" id="cnt"></span></div>
 <div id="cal"><p class="sub">جارٍ التحميل…</p></div>
 <div class="lgd dk"><span><i class="f"></i>متاح</span><span><i class="a"></i>محجوز</span><span><i class="p"></i>بانتظار الاعتماد</span></div></div></section>
-<section class="hsec"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div></div><div class="fcds wrap" id="fl"></div></section>
+<section class="hsec"><div class="hh rv"><div><small>المرافق</small><h2>المرافق المتاحة للحجز</h2></div></div><div class="wrap"><div class="fchips" id="fch"></div><div class="fcds" id="fl"></div></div></section>
 <div id="ftr"></div>
 <script src="assets/config.js"></script><script src="assets/chrome.js"></script><script src="assets/about-icons.js"></script><script src="assets/pubfb.js"></script><script>
 pubInit("bookings.html");
@@ -57,7 +57,7 @@ pubInit("bookings.html");
     const chip=(b)=>`<span class="wchip ${b.status}" title="${LBL[b.status]}"><span class="who-p sm"><b>${pesc((b.booker||"")[0]||"")}</b>${b.photo?`<img src="${pPhoto(b.photo)}" alt="" loading="lazy" onerror="this.remove()">`:""}</span><span><b>${pesc(facName(C,b.facility_id))}</b><small>${pesc(b.booker||"")}${b.subject?" · "+pesc(b.subject):""}</small></span></span>`;
     $("cal").innerHTML=`<div class="tw card" style="padding:0"><table class="sch pubsch wkt"><thead><tr><th>اليوم</th>${PB.map(p=>`<th>${pesc(p.name)}<small>${p.starts} – ${p.ends}</small></th>`).join("")}</tr></thead><tbody>${days.map(d=>`<tr class="${d===C.today?"now":""}"><td><button type="button" class="dlink" data-d="${d}"><b>${P_DAYS[pDow(d)]}${d===C.today?" · اليوم":""}</b><small>${pShort(d)}</small></button></td>${PB.map(p=>{const L=B.filter(b=>b.date===d&&b.periods.includes(p.id));return `<td>${L.map(chip).join("")||'<span class="st free">—</span>'}</td>`;}).join("")}</tr>`).join("")}</tbody></table></div>`;
   }
-  function load(){ const ws=pWeekStart(date); return pubCalendar(ws,pAdd(ws,6)).then(c=>{C=c;draw();$("fl").innerHTML=c.facilities.map(f=>facCard(f,c)).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';}).catch(()=>{$("cal").innerHTML='<p class="err">تعذر تحميل التقويم الآن. حاول بعد قليل.</p>';}); }
+  function load(){ const ws=pWeekStart(date); return pubCalendar(ws,pAdd(ws,6)).then(c=>{C=c;draw();facSection($("fl"),$("fch"),c);}).catch(()=>{$("cal").innerHTML='<p class="err">تعذر تحميل التقويم الآن. حاول بعد قليل.</p>';}); }
   const go=(d)=>{date=d;history.replaceState(null,"","#"+d);load();};
   $("vw").onclick=(e)=>{const b=e.target.closest("[data-v]");if(b){view=b.dataset.v;C&&draw();}};
   $("md").onclick=(e)=>{const b=e.target.closest("[data-m]");if(b){mode=b.dataset.m;C&&draw();}};
