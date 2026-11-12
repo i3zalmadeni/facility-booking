@@ -130,7 +130,7 @@ async function boot(page, render, o = {}) {
     `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a><span class="vdiv"></span>${coreBlock()}${headMoe}</div></div>
      <div class="strip" aria-hidden="true"></div>
      <div class="dnav"><div class="wrap dn"><div class="dnav-in">${items.map(([h, n, e, t, , bd]) => `<a href="${h}" title="${esc(t)}" class="${h === page ? "on" : ""}" ${h === page ? 'aria-current="page"' : ""}>${ico(e)}${n}${bd ? `<span class="bdg" data-b="${bd}"></span>` : ""}</a>`).join("")}</div>
-     <div class="dwho"><span class="dname">${esc(who.name)}</span><a class="loginbtn" href="#" id="out">خروج</a></div></div></div></header>
+     <div class="dwho"><div class="ntf"><button type="button" class="ntf-b" id="ntfB" aria-label="الإشعارات" aria-expanded="false" aria-haspopup="true">${ico("bell")}<span class="ntf-n" id="ntfN" hidden></span></button><div class="ntf-p" id="ntfP" hidden><div class="ntf-h"><b>الإشعارات</b><button type="button" id="ntfR">تحديد الكل كمقروء</button></div><div id="ntfL"><p class="sub" style="margin:14px">جارٍ التحميل…</p></div></div></div><span class="dname">${esc(who.name)}</span><a class="loginbtn" href="#" id="out">خروج</a></div></div></div></header>
      <div class="pagebar"><div class="wrap pb"><div class="pb-t"><small>${esc(ctx.role)}</small><h1>${esc(cur[1])}</h1></div><p class="pb-d">${esc(cur[3])}</p>
      <div class="pb-u"><span id="pbTime"></span><button class="btn sec sm" id="pbRefresh" type="button">${ico("refresh")}تحديث</button></div></div></div>
      <main class="wrap" id="main"></main>${footerHTML}`;
@@ -138,7 +138,25 @@ async function boot(page, render, o = {}) {
   $("#pbTime").textContent = "حُدِّثت " + new Date().toLocaleTimeString("ar-SA-u-nu-latn", { hour: "numeric", minute: "2-digit", timeZone: TZ });
   $("#pbRefresh").onclick = () => location.reload();
   $("#out").onclick = (e) => { e.preventDefault(); doLogout(); };
-  if (isMgr) rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).then((l) => { $$("[data-b]").forEach((e) => { e.textContent = (l || []).length || ""; }); }).catch(() => {});
+  // الإشعارات: طلبات تنتظر اعتمادي (للمنسق والمدير) وقرارات على حجوزاتي؛ المقروء يُحفظ في هذا المتصفح
+  (async () => {
+    const KEY = "fb-ntf-seen-" + session.user.id; let seen = 0; try { seen = +localStorage.getItem(KEY) || 0; } catch (e) {}
+    const since = addDays(todayISO(), -14), N = [];
+    const [mg, mine] = await Promise.all([isMgr ? rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).catch(() => []) : [], rpc("fb_bookings_list", { p_mode: "mine", p_from: since }).catch(() => [])]);
+    $$("[data-b]").forEach((e) => { e.textContent = (mg || []).length || ""; });
+    (mg || []).filter((b) => !b.mine).forEach((b) => N.push({ t: +new Date(b.created_at), k: "pending", ic: "inbox", h: "requests.html", a: `طلب حجز جديد من ${b.booker}`, d: `${b.facility} · ${fmtDay(b.date)}` }));
+    const W = { approved: ["check", "اعتُمد حجزك"], rejected: ["x", "اعتُذر عن حجزك"], cancelled: ["x", "أُلغي حجزك"] };
+    (mine || []).filter((b) => W[b.status] && b.decided_at && b.decided_by).forEach((b) => N.push({ t: +new Date(b.decided_at), k: b.status, ic: W[b.status][0], h: "my.html", a: `${W[b.status][1]}: ${b.facility}`, d: `${fmtDay(b.date)}${b.decision_note ? " · " + b.decision_note : ""}` }));
+    N.sort((x, y) => y.t - x.t);
+    const paint = () => { const n = N.filter((x) => x.t > seen).length, e = $("#ntfN"); e.hidden = !n; e.textContent = n > 9 ? "9+" : n;
+      $("#ntfL").innerHTML = N.length ? N.slice(0, 20).map((x) => `<a class="ntf-i ${x.k}${x.t > seen ? " new" : ""}" href="${x.h}"><span class="ntf-ic">${ico(x.ic)}</span><span><b>${esc(x.a)}</b><small>${esc(x.d)}</small><time>${new Date(x.t).toLocaleString("ar-SA-u-ca-gregory-nu-latn", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: TZ })}</time></span></a>`).join("") : '<p class="sub" style="margin:16px;text-align:center">لا إشعارات حالياً.</p>'; };
+    const mark = () => { seen = Date.now(); try { localStorage.setItem(KEY, seen); } catch (e) {} paint(); };
+    const P = $("#ntfP"), B = $("#ntfB"), close = () => { P.hidden = true; B.setAttribute("aria-expanded", "false"); };
+    B.onclick = (e) => { e.stopPropagation(); P.hidden = !P.hidden; B.setAttribute("aria-expanded", String(!P.hidden)); };
+    $("#ntfR").onclick = mark; P.onclick = (e) => e.stopPropagation();
+    document.addEventListener("click", close); document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    paint();
+  })();
   const main = $("#main");
   try { await render(main, ctx); } catch (e) { console.error(e); main.innerHTML = `<p class="err">تعذر تحميل الصفحة: ${esc(mapErr(e))}</p>`; }
 }
