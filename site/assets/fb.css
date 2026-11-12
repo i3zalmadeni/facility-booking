@@ -99,3 +99,18 @@ td input[type=time],td input[type=text],td input[type=number]{padding:6px 8px;mi
 .wday .wd-e{color:var(--muted);font-size:.86rem}
 .wday.closed{opacity:.55;cursor:default;background:var(--soft)}.wday.closed:hover{transform:none;border-color:var(--line);box-shadow:none}
 .pubnote{color:var(--ink2);font-size:.86rem;margin:10px 0 0}
+
+/* الحاجز: صورة واسم ومادة */
+.who{display:flex;align-items:center;gap:9px;min-width:0}
+.who-p{position:relative;width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;display:grid;place-items:center;background:var(--brandsoft);color:var(--brand2);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.who-p b{font-weight:800}.who-p img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.who-t{display:flex;flex-direction:column;min-width:0;line-height:1.3}.who-t strong{font-size:.86rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.who-t small{color:var(--ink2);font-size:.76rem;font-weight:500}
+.pubsch td .st em,.wd-bk em,.tdc em{font-style:normal;font-size:.74rem;font-weight:700}
+.pubsch td .st.approved,.pubsch td .st.pending{display:flex;flex-direction:column;gap:6px;padding:9px 10px}
+.pubsch th,.pubsch td{min-width:185px}
+.wd-b{display:flex;flex-direction:column;gap:7px}
+.wd-bk{display:flex;flex-direction:column;gap:5px;border-radius:14px;padding:8px 10px;background:var(--c4b);color:var(--c4f)}.wd-bk.pending{background:var(--c3b);color:var(--c3f)}
+.tdl{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.tdc{display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--ok);border-radius:18px;padding:13px 15px}
+.tdc.pending{border-inline-start-color:var(--gold)}.tdc-m b{display:block}.tdc-m small{color:var(--ink2);font-size:.84rem}
+.tdc em{color:var(--c4f)}.tdc.pending em{color:var(--c3f)}

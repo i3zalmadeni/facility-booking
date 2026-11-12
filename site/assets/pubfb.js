@@ -15,6 +15,10 @@ function pubCalendar(from, to) {
 }
 // حالة الخانة: مرفق + حصة + تاريخ
 const slotOf = (C, date, fid, pid) => (C.bookings.find((b) => b.date === date && b.facility_id === fid && b.periods.includes(pid)) || {}).status || "";
+const bookOf = (C, date, fid, pid) => C.bookings.find((b) => b.date === date && b.facility_id === fid && b.periods.includes(pid));
+const pPhoto = (ph) => (ph ? APP_CONFIG.supabaseUrl + "/storage/v1/object/public/public-photos/" + encodeURI(ph) : "");
+// بطاقة الحاجز: الصورة (أو الحرف الأول) والاسم والمادة
+const whoHTML = (b) => { const n = (b.booker || "").trim(); return `<span class="who"><span class="who-p"><b>${pesc(n ? n[0] : "")}</b>${b.photo ? `<img src="${pPhoto(b.photo)}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span><span class="who-t"><strong>${pesc(n || "—")}</strong>${b.subject ? `<small>${pesc(b.subject)}</small>` : ""}</span></span>`; };
 // الحصة الجارية أو التالية بتوقيت الرياض
 function nowPeriod(C) {
   if (C.closed_weekdays.includes(pDow(C.today))) return { t: "لا دوام اليوم", s: "off" };

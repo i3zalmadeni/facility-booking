@@ -15,6 +15,8 @@
 <div class="kpi"><div class="ic" data-ico="clock"></div><div><b id="kS">—</b><span>حصة متاحة اليوم</span></div></div>
 <div class="kpi"><div class="ic" data-ico="calendar"></div><div><b id="kW">—</b><span>حجز هذا الأسبوع</span></div></div></div></section>
 
+<section class="hsec" id="tdy" hidden><div class="hh rv"><div><small>اليوم</small><h2>حجوزات اليوم</h2></div></div><div class="tdl wrap" id="tl"></div></section>
+
 <section class="hsec" id="week"><div class="hh rv"><div><small>هذا الأسبوع</small><h2>أيام الحجز</h2><p class="hh-d">اضغط اليوم لعرض حصصه ومرافقه المحجوزة.</p></div><a class="btn sec" href="bookings.html">التقويم كاملاً</a></div>
 <div class="week wrap rv" id="wk"></div></section>
 
@@ -47,12 +49,13 @@ pubInit("index.html");
     const F=C.facilities, P=C.periods, T=C.bookings.filter(b=>b.date===C.today), open=!C.closed_weekdays.includes(pDow(C.today));
     const cur=P.find(p=>p.starts<=C.now&&C.now<p.ends);
     $("bSub").textContent=F.length?(open?"كل شريط حصة، من الأولى إلى الأخيرة":"لا دوام اليوم"):"لم تُفعَّل مرافق للحجز بعد";
-    $("bRows").innerHTML=F.slice(0,7).map(f=>`<div class="brow"><b title="${pesc(f.name)}">${pesc(f.name)}</b><span class="dots2">${P.map(p=>`<i class="${p.bookable?slotOf(C,C.today,f.id,p.id):"brk"}${cur&&cur.id===p.id?" cur":""}" title="${pesc(p.name)} ${p.starts}–${p.ends}"></i>`).join("")}</span></div>`).join("")+(F.length>7?`<small style="display:block;margin-top:10px;opacity:.8">و${F.length-7} مرافق أخرى في <a href="bookings.html" style="color:#fff;text-decoration:underline">تقويم الحجوزات</a></small>`:"");
+    $("bRows").innerHTML=F.slice(0,7).map(f=>`<div class="brow"><b title="${pesc(f.name)}">${pesc(f.name)}</b><span class="dots2">${P.map(p=>`<i class="${p.bookable?slotOf(C,C.today,f.id,p.id):"brk"}${cur&&cur.id===p.id?" cur":""}" title="${pesc(p.name)} ${p.starts}–${p.ends}${(bookOf(C,C.today,f.id,p.id)||{}).booker?" · "+pesc(bookOf(C,C.today,f.id,p.id).booker):""}"></i>`).join("")}</span></div>`).join("")+(F.length>7?`<small style="display:block;margin-top:10px;opacity:.8">و${F.length-7} مرافق أخرى في <a href="bookings.html" style="color:#fff;text-decoration:underline">تقويم الحجوزات</a></small>`:"");
     const slots=P.filter(p=>p.bookable), taken=T.reduce((n,b)=>n+b.periods.length,0);
     num($("kF"),F.length); num($("kT"),T.length); num($("kS"),open?Math.max(0,F.length*slots.filter(p=>p.ends>C.now).length-T.reduce((n,b)=>n+b.periods.filter(id=>(P.find(p=>p.id===id)||{}).ends>C.now).length,0)):0); num($("kW"),C.bookings.length);
     $("wk").innerHTML=Array.from({length:7},(_,i)=>pAdd(ws,i)).filter(d=>!C.closed_weekdays.includes(pDow(d))).map(d=>{
       const B=C.bookings.filter(b=>b.date===d), names=[...new Set(B.map(b=>(F.find(f=>f.id===b.facility_id)||{}).name).filter(Boolean))];
       return `<a class="wday${d===C.today?" wd-today":""}${B.length?" has":""}" href="bookings.html#${d}"><span class="wd-h"><b>${P_DAYS[pDow(d)]}${d===C.today?" · اليوم":""}</b><small>${pShort(d)}</small></span>${B.length?`<span class="wd-n">${B.length} <small>حجز · ${B.reduce((n,b)=>n+b.periods.length,0)} حصة</small></span><span class="wd-f">${names.slice(0,4).map(n=>`<span>${pesc(n)}</span>`).join("")}${names.length>4?`<span>+${names.length-4}</span>`:""}</span>`:'<span class="wd-e">لا حجوزات، كل المرافق متاحة</span>'}</a>`;}).join("");
+    $("tdy").hidden=!T.length; $("tl").innerHTML=T.map(b=>{const ps=b.periods.map(id=>P.find(p=>p.id===id)).filter(Boolean).sort((x,y)=>x.starts<y.starts?-1:1);return `<div class="tdc ${b.status}">${whoHTML(b)}<div class="tdc-m"><b>${pesc((F.find(f=>f.id===b.facility_id)||{}).name||"")}</b><small>${ps.map(p=>pesc(p.name)).join("، ")}${ps.length?` · ${ps[0].starts} – ${ps[ps.length-1].ends}`:""}</small></div><em>${b.status==="approved"?"محجوز":"بانتظار الاعتماد"}</em></div>`;}).join("");
     $("fl").innerHTML=F.map(facCard).join("")||'<p class="sub">لم تُفعَّل مرافق للحجز بعد.</p>';
     document.querySelectorAll("#fl .rv").forEach(e=>e.classList.add("in"));
   }
