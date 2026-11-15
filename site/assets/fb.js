@@ -125,7 +125,7 @@ async function boot(page, render, o = {}) {
   if (o.mgr && !isMgr) { location.replace("dashboard.html"); return; }
   const ctx = { who, isAdmin, isCoord, isMgr, uid: session.user.id, role: isAdmin ? "مدير النواة الرقمية" : isCoord ? "منسق الحجز" : "المعلم" };
   const items = NAV.filter((n) => !n[4] || isMgr);
-  const cur = NAV.find((n) => n[0] === page) || [page, "لوحة التحكم", "grid", ""];
+  const cur = NAV.find((n) => n[0] === page) || [page, o.title || "لوحة التحكم", "grid", o.desc || ""];
   shell.innerHTML =
     `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a><span class="vdiv"></span>${coreBlock()}${headMoe}</div></div>
      <div class="strip" aria-hidden="true"></div>
@@ -140,7 +140,7 @@ async function boot(page, render, o = {}) {
   $("#out").onclick = (e) => { e.preventDefault(); doLogout(); };
   // الإشعارات: طلبات تنتظر اعتمادي (للمنسق والمدير) وقرارات على حجوزاتي؛ المقروء يُحفظ في هذا المتصفح
   let fbOld = 0; try { fbOld = +localStorage.getItem("fb-ntf-seen-" + session.user.id) || 0; } catch (e) {}
-  ubMount({ key: "fb", uid: session.user.id, load: async () => {
+  ubMount({ key: "fb", uid: session.user.id, allUrl: "inbox.html", load: async () => {
     const since = addDays(todayISO(), -14), N = [];
     const [mg, mine] = await Promise.all([isMgr ? rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).catch(() => []) : [], rpc("fb_bookings_list", { p_mode: "mine", p_from: since }).catch(() => [])]);
     $$("[data-b]").forEach((e) => { e.textContent = (mg || []).length || ""; });
