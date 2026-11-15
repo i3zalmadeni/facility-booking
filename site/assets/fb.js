@@ -108,7 +108,7 @@ const NAV = [
   ["requests.html", "طلبات الحجز", "inbox", "طلبات المرافق التي تنسقها: اعتماد أو رفض", "mgr", "pending_total"],
   ["schedule.html", "جدول المرافق", "grid", "من يحجز أي حصة في كل مرفق خلال اليوم", "mgr"],
   ["stats.html", "الإحصائيات", "chart", "الأكثر زيارة والأكثر تفعيلاً", "mgr"],
-  ["settings.html", "الإعدادات", "gear", "المرافق والحصص وقواعد الحجز", "mgr"],
+  ["settings.html", "إدارة البوابة", "gear", "المرافق والحصص وقواعد الحجز", "mgr"],
 ];
 async function boot(page, render, o = {}) {
   const { data: { session } } = await sb.auth.getSession();

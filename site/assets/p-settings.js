@@ -4,7 +4,7 @@ boot("settings.html", async (m, c) => {
   let tab = "fac", F = (await rpc("fb_my_facilities")) || [];
   const coreFac = (window.CORE_URL || "#") + "facilities.html";
   const draw = () => { m.querySelector("#tabs").innerHTML = TABS.map(([k, l]) => `<button data-t="${k}" class="${k === tab ? "on" : ""}">${l}</button>`).join(""); ({ fac: drawFac, per: drawPer, gen: drawGen })[tab](); };
-  m.innerHTML = head("الإعدادات", c.isAdmin ? "ما يُفعَّل للحجز وأزمنة الحصص وقواعد الحجز." : "إعدادات الحجز للمرافق التي تنسقها.") + '<div class="tabs" id="tabs"></div><div id="pn"></div>';
+  m.innerHTML = head("إدارة البوابة", c.isAdmin ? "ما يُفعَّل للحجز وأزمنة الحصص وقواعد الحجز." : "إعدادات الحجز للمرافق التي تنسقها.") + '<div class="tabs" id="tabs"></div><div id="pn"></div>';
   $("#tabs").onclick = (e) => { const b = e.target.closest("[data-t]"); if (b) { tab = b.dataset.t; draw(); } };
   const saveFac = async (id, patch) => { const { error } = await sb.from("fb_facility_settings").upsert({ facility_id: id, ...patch, updated_at: new Date().toISOString() }, { onConflict: "facility_id" }); if (error) throw new Error(mapErr(error)); Object.assign(F.find((f) => f.id === id), patch); };
 
