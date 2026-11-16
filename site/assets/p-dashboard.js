@@ -18,7 +18,7 @@ boot("dashboard.html", async (m, c) => {
   const kp = [kpi("calendar", myUp.length, "حجوزاتي القادمة", 0), kpi("hourglass", act(mine).filter((b) => b.status === "pending").length, "بانتظار اعتماد المنسق", 3)];
   if (c.isMgr) kp.push(kpi("inbox", pend.length, "طلبات بانتظار قرارك", 2), kpi("clock", todayAll.length, "حجوزات اليوم في مرافقك", 1), kpi("help", help, "تطلب مساعدة المنسق", 4));
 
-  m.innerHTML = `<section class="dash-hero"><div><h2>مرحباً ${esc(c.who.name)}</h2><p>${esc(fmtDay(today))} · ${esc(fmtHijri(today))}</p></div><span class="yr"><i></i>${esc(c.role)}</span></section>
+  m.innerHTML = `<section class="dash-hero"><div><h2>ملخص اليوم</h2><p>${esc(fmtDay(today))} · ${esc(fmtHijri(today))}</p></div><span class="yr"><i></i>${esc(c.role)}</span></section>
     <div class="grid">${kp.join("")}</div>
     ${c.isAdmin && fac.length && !openCnt ? `<div class="alert mt"><b>لم يُفعَّل أي مرفق للحجز بعد.</b> فعّل المرافق المناسبة من <a href="settings.html">الإعدادات</a> ليظهر الحجز للمعلمين.</div>` : ""}
     ${c.isMgr ? `<h3 class="sec">بانتظار قرارك ${pend.length ? `<span class="badge warn">${pend.length}</span>` : ""}</h3><div id="pd">${pend.length ? pend.slice(0, 6).map((b) => bookingCard(b)).join("") + (pend.length > 6 ? `<p><a href="requests.html">عرض كل الطلبات (${pend.length})</a></p>` : "") : empty("check", "لا توجد طلبات معلّقة", "ستظهر هنا طلبات الحجز الجديدة لمرافقك.")}</div>

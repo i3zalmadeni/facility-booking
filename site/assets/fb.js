@@ -135,6 +135,10 @@ async function boot(page, render, o = {}) {
      <div class="pb-u"><span id="pbTime"></span><button class="btn sec sm" id="pbRefresh" type="button">${ico("refresh")}تحديث</button></div></div></div>
      <main class="wrap" id="main"></main>${footerHTML}`;
   bindNav();
+  if (window.PK && page === "settings.html") PK.mountAdminSection({ sb, system: "facility_booking", central: false, after: "#main" });
+  if (window.PK) { PK.fitNav(document.querySelector(".dnav-in"));
+    PK.mountAnnouncements({ sb, system: "facility_booking", page: page === "dashboard.html" ? "home" : "all", before: ".pagebar" });
+    if (page === "dashboard.html") PK.welcome("#main", { mode: "before", sb, name: who.name, role: ctx.role }); }
   $("#pbTime").textContent = "حُدِّثت " + new Date().toLocaleTimeString("ar-SA-u-nu-latn", { hour: "numeric", minute: "2-digit", timeZone: TZ });
   $("#pbRefresh").onclick = () => location.reload();
   $("#out").onclick = (e) => { e.preventDefault(); doLogout(); };
