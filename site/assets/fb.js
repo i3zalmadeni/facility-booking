@@ -44,6 +44,8 @@ const ERR = {
   note_required: "اكتب سبب الرفض.",
   not_active: "هذا الحجز غير نشط.",
   bad_range: "نطاق التاريخ غير صحيح.",
+  same_coordinator: "لا يمكن أن يكون المنسق الرئيسي والبديل الشخص نفسه.",
+  not_staff_target: "المنسوب المختار غير فعّال.",
 };
 const mapErr = (e) => { const m = e?.message || String(e); return ERR[m] || (/permission denied|row-level security/i.test(m) ? ERR.forbidden : m); };
 async function rpc(fn, args) {
