@@ -1,0 +1,42 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حجوزات الخطط – احجز مرفق</title><meta name="description" content="المرافق المحجوزة بناءً على الخطط والبرامج، في تقويم أسبوعي"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/core.css"><link rel="stylesheet" href="assets/fb.css"></head><body class="pubsite">
+<div id="hdr"></div>
+<section class="hero3 slim"><div class="h3g"><div class="h3t"><span class="h3pill"><span class="tg" data-ico="calendar"></span>تقويم أسبوعي</span><h1><em>حجوزات الخطط</em></h1><p class="h3p">المرافق المحجوزة بناءً على برامج الخطط واجتماعات مجموعات التعلم المهنية، أسبوعًا أسبوعًا.</p><div class="h3act"><a class="btn" href="bookings.html">كل الحجوزات</a></div></div></div></section>
+<section class="hsec"><div class="wrap">
+<div class="calbar"><button class="btn sec sm" id="pv">الأسبوع السابق</button><input type="date" id="d" aria-label="التاريخ"><button class="btn sec sm" id="nx">الأسبوع التالي</button><button class="btn sec sm" id="td">هذا الأسبوع</button><span class="sp"></span><span class="t" id="ttl"></span></div>
+<div class="calbar fl2"><label class="flt"><span>الخطة</span><select id="fPl"><option value="">كل الخطط</option></select></label><label class="flt"><span>المرفق</span><select id="fF"><option value="">كل المرافق</option></select></label>
+<button class="btn sec sm" id="clr" hidden>إلغاء الفرز</button><span class="sp"></span><span class="cnt" id="cnt"></span></div>
+<div id="cal"><p class="sub">جارٍ التحميل…</p></div>
+<div class="lgd dk" id="lg"></div></div></section>
+<div id="ftr"></div>
+<script src="assets/config.js"></script><script src="assets/chrome.js"></script><script src="assets/unified-kit.js"></script><script src="assets/about-icons.js"></script><script src="assets/pubfb.js"></script><script>
+pubInit("plans.html");
+(function(){
+  const $=(i)=>document.getElementById(i), today=pToday();
+  let date=/^#\d{4}-\d\d-\d\d$/.test(location.hash)?location.hash.slice(1):today, C=null, PB=new Map(), fPl="", fF="";
+  const hue=(s)=>{let h=7;for(const c of String(s||"x"))h=(h*31+c.charCodeAt(0))>>>0;return h%360;};
+  const col=(plan)=>{const h=hue(plan);return `--pb:hsl(${h} 55% 92%);--pf:hsl(${h} 55% 28%);--pl:hsl(${h} 60% 45%)`;};
+  const planOf=(b)=>(PB.get(b.id)||{}).plan||"بلا خطة";
+  function load(){const ws=pWeekStart(date),we=pAdd(ws,6);
+    const url=(fn,body)=>fetch(APP_CONFIG.supabaseUrl+"/rest/v1/rpc/"+fn,{method:"POST",headers:{apikey:APP_CONFIG.supabaseKey,"content-type":"application/json"},body:JSON.stringify(body)}).then(r=>{if(!r.ok)throw new Error(fn);return r.json();});
+    return Promise.all([pubCalendar(ws,we),url("fb_public_plan_bookings",{p_from:ws,p_to:we})]).then(([c,pl])=>{C=c;PB=new Map(pl.map(x=>[x.booking_id,x]));draw();}).catch(()=>{$("cal").innerHTML='<p class="err">تعذر تحميل الحجوزات الآن. حاول بعد قليل.</p>';});}
+  function draw(){
+    const ws=pWeekStart(date), days=Array.from({length:7},(_,i)=>pAdd(ws,i)).filter(d=>!C.closed_weekdays.includes(pDow(d)));
+    const all=C.bookings.filter(b=>PB.has(b.id)&&days.includes(b.date));
+    const plans=[...new Set(all.map(planOf))].sort((a,b)=>a.localeCompare(b,"ar")), facs=C.facilities.filter(f=>all.some(b=>b.facility_id===f.id));
+    $("fPl").innerHTML='<option value="">كل الخطط</option>'+plans.map(p=>`<option${p===fPl?" selected":""}>${pesc(p)}</option>`).join("");
+    $("fF").innerHTML='<option value="">كل المرافق</option>'+facs.map(f=>`<option value="${f.id}"${f.id===fF?" selected":""}>${pesc(f.name)}</option>`).join("");
+    $("clr").hidden=!(fPl||fF); $("d").value=date; $("ttl").textContent=`${pShort(ws)} – ${pShort(pAdd(ws,6))}`;
+    const B=all.filter(b=>(!fPl||planOf(b)===fPl)&&(!fF||b.facility_id===fF));
+    $("cnt").textContent=B.length?`${B.length} حجز · ${new Set(B.map(planOf)).size} خطة`:"";
+    $("lg").innerHTML=[...new Set(B.map(planOf))].map(p=>`<span style="${col(p)}"><i style="background:var(--pl)"></i>${pesc(p)}</span>`).join("");
+    if(!B.length){$("cal").innerHTML='<div class="card emp"><b>لا حجوزات للخطط في هذا الأسبوع</b><p class="sub" style="margin:4px 0 0">تظهر هنا المرافق التي تُحجز من برامج الخطط واجتماعات مجموعات التعلم المهنية.</p></div>';return;}
+    const P=C.periods.filter(p=>p.bookable), chip=(b)=>{const x=PB.get(b.id)||{};return `<span class="pgchip" style="${col(planOf(b))}" title="${pesc(x.program||"")}"><b>${pesc(x.program||b.purpose||"برنامج")}</b><small>${pesc(planOf(b))}</small><em>${pesc(facName(C,b.facility_id))}</em></span>`;};
+    $("cal").innerHTML=`<div class="tw card" style="padding:0"><table class="sch pubsch wkt pgt"><thead><tr><th>الحصة</th>${days.map(d=>`<th class="${d===C.today?"tdh":""}">${P_DAYS[pDow(d)]}<small>${pShort(d)}${d===C.today?" · اليوم":""}</small></th>`).join("")}</tr></thead><tbody>${P.map(p=>`<tr><td><b>${pesc(p.name)}</b><small class="mut">${p.starts} – ${p.ends}</small></td>${days.map(d=>{const L=B.filter(b=>b.date===d&&b.periods.includes(p.id));return `<td>${L.map(chip).join("")||'<span class="pgno">—</span>'}</td>`;}).join("")}</tr>`).join("")}</tbody></table></div>`;
+  }
+  const go=(d)=>{date=d;history.replaceState(null,"","#"+d);load();};
+  $("fPl").onchange=(e)=>{fPl=e.target.value;draw();}; $("fF").onchange=(e)=>{fF=e.target.value;draw();}; $("clr").onclick=()=>{fPl="";fF="";draw();};
+  $("pv").onclick=()=>go(pAdd(date,-7)); $("nx").onclick=()=>go(pAdd(date,7)); $("td").onclick=()=>go(today); $("d").onchange=(e)=>e.target.value&&go(e.target.value);
+  load();
+})();
+</script></body></html>
