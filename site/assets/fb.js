@@ -111,6 +111,7 @@ const NAV = [
   ["dashboard.html", "مكتبي الإلكتروني", "home", "ما يخصك الآن: طلباتك وجدولك", null],
   ["book.html", "حجز جديد", "plus", "اختر التاريخ والمرفق والحصص", null],
   ["my.html", "حجوزاتي", "calendar", "حجوزاتك القادمة والسابقة", null],
+  ["myfac.html", "حجوزات مرفقي", "inbox", "الحجوزات على المرافق التي أنت مسؤولها: اعتماد أو رفض", "own", "pending_total"],
   ["requests.html", "طلبات الحجز", "inbox", "طلبات المرافق التي تنسقها: اعتماد أو رفض", "mgr", "pending_total"],
   ["schedule.html", "جدول المرافق", "grid", "من يحجز أي حصة في كل مرفق خلال اليوم", "mgr"],
   ["stats.html", "الإحصائيات", "chart", "الأكثر زيارة والأكثر تفعيلاً", "mgr"],
@@ -131,10 +132,13 @@ async function boot(page, render, o = {}) {
   // تبديل الدور: منسق الحجز يختار بين لوحة المنسق (الطلبات والجدول والإحصائيات والإدارة) ولوحة المعلم (الحجز وحجوزاتي)
   const canSwitch = isMgr, view = window.RoleSwitch ? RoleSwitch.view("facility_booking", session.user.id, canSwitch) : "coord", asCoord = canSwitch && view === "coord";
   if (canSwitch && !asCoord) { isAdmin = false; isCoord = false; isMgr = false; }
+  // لوحة المعلم: من هو مسؤول (رئيسي أو بديل) عن مرفق يرى «حجوزات مرفقي» لاعتماد حجوزات مرافقه فقط
+  const myFac = who.facility_ids || [], ownFac = !asCoord && myFac.length > 0;
   if (o.mgr && !isMgr) { location.replace("dashboard.html"); return; }
+  if (o.own && !ownFac) { location.replace(asCoord ? "requests.html" : "dashboard.html"); return; }
   if (asCoord && ["book.html", "my.html"].includes(page)) { location.replace("dashboard.html"); return; }
-  const ctx = { who, isAdmin, isCoord, isMgr, canSwitch, view, asCoord, uid: session.user.id, role: canSwitch && !asCoord ? "المعلم" : isAdmin ? "مدير النواة الرقمية" : isCoord ? "منسق الحجز" : "المعلم" };
-  const items = NAV.filter((n) => (asCoord ? n[4] || n[0] === "dashboard.html" : !n[4] || isMgr));
+  const ctx = { who, isAdmin, isCoord, isMgr, canSwitch, view, asCoord, ownFac, myFac, uid: session.user.id, role: canSwitch && !asCoord ? "المعلم" : isAdmin ? "مدير النواة الرقمية" : isCoord ? "منسق الحجز" : "المعلم" };
+  const items = NAV.filter((n) => (n[4] === "own" ? ownFac : asCoord ? n[4] || n[0] === "dashboard.html" : !n[4] || isMgr));
   const cur = NAV.find((n) => n[0] === page) || [page, o.title || "لوحة التحكم", "grid", o.desc || ""];
   shell.innerHTML =
     `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a><span class="vdiv"></span>${coreBlock()}${headMoe}</div></div>
@@ -166,10 +170,11 @@ async function boot(page, render, o = {}) {
   if (window.RoleSwitch) RoleSwitch.mount({ sys: "facility_booking", uid: session.user.id, can: canSwitch, view, home: { coord: "dashboard.html", teacher: "dashboard.html" }, teacherDesc: "حجز المرافق وحجوزاتي", coordDesc: "اعتماد الطلبات والجدول والإحصائيات والإدارة" });
   ubMount({ key: "fb", uid: session.user.id, allUrl: "inbox.html", load: async () => {
     const since = addDays(todayISO(), -14), N = [];
-    const [mg, mine] = await Promise.all([isMgr ? rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).catch(() => []) : [], rpc("fb_bookings_list", { p_mode: "mine", p_from: since }).catch(() => [])]);
+    let [mg, mine] = await Promise.all([isMgr || ownFac ? rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).catch(() => []) : [], rpc("fb_bookings_list", { p_mode: "mine", p_from: since }).catch(() => [])]);
+    if (ownFac) mg = (mg || []).filter((b) => myFac.includes(b.facility_id));
     $$("[data-b]").forEach((e) => { e.textContent = (mg || []).length || ""; });
     const old = (t) => (fbOld && +new Date(t) <= fbOld ? true : undefined);
-    (mg || []).filter((b) => !b.mine).forEach((b) => N.push({ id: "p:" + b.id, t: b.created_at, read: old(b.created_at), tone: "warn", icon: "inbox", href: "requests.html", title: `طلب حجز جديد من ${b.booker}`, body: `${b.facility} · ${fmtDay(b.date)}` }));
+    (mg || []).filter((b) => !b.mine).forEach((b) => N.push({ id: "p:" + b.id, t: b.created_at, read: old(b.created_at), tone: "warn", icon: "inbox", href: ownFac ? "myfac.html" : "requests.html", title: `طلب حجز جديد من ${b.booker}`, body: `${b.facility} · ${fmtDay(b.date)}` }));
     const W = { approved: ["check", "اعتُمد حجزك", "ok"], rejected: ["x", "اعتُذر عن حجزك", "bad"], cancelled: ["x", "أُلغي حجزك", "bad"] };
     (mine || []).filter((b) => W[b.status] && b.decided_at && b.decided_by).forEach((b) => N.push({ id: "d:" + b.id + ":" + b.status, t: b.decided_at, read: old(b.decided_at), tone: W[b.status][2], icon: W[b.status][0], href: "my.html", title: `${W[b.status][1]}: ${b.facility}`, body: `${fmtDay(b.date)}${b.decision_note ? " · " + b.decision_note : ""}` }));
     return N;
