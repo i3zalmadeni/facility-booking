@@ -15,7 +15,7 @@ boot("dashboard.html", async (m, c) => {
   const reg = (h, i, k, t, d) => `<a class="card reg" href="${h}"><div class="ic k${k}">${ico(i)}</div><div><b>${t}</b><small>${d}</small></div></a>`;
   const openCnt = (fac || []).filter((f) => f.is_bookable).length;
 
-  const kp = [kpi("calendar", myUp.length, "حجوزاتي القادمة", 0), kpi("hourglass", act(mine).filter((b) => b.status === "pending").length, "بانتظار اعتماد المنسق", 3)];
+  const kp = c.asCoord ? [] : [kpi("calendar", myUp.length, "حجوزاتي القادمة", 0), kpi("hourglass", act(mine).filter((b) => b.status === "pending").length, "بانتظار اعتماد المنسق", 3)];   // لوحة المنسق: بلا حجوزاتي
   if (c.isMgr) kp.push(kpi("inbox", pend.length, "طلبات بانتظار قرارك", 2), kpi("clock", todayAll.length, "حجوزات اليوم في مرافقك", 1), kpi("help", help, "تطلب مساعدة المنسق", 4));
 
   m.innerHTML = `
@@ -24,7 +24,7 @@ boot("dashboard.html", async (m, c) => {
     ${c.isAdmin && (fac || []).some((f) => f.is_bookable && !f.primary_id && !f.backup_id) ? `<div class="alert mt"><b>مرافق مفعّلة للحجز بلا منسق:</b> ${(fac || []).filter((f) => f.is_bookable && !f.primary_id && !f.backup_id).map((f) => esc(f.name)).join("، ")}. لن يعتمد طلباتها غيرك حتى تعيّن لها منسقًا من <a href="settings.html">إدارة البوابة</a>.</div>` : ""}
     ${c.isMgr ? `<h3 class="sec">بانتظار قرارك ${pend.length ? `<span class="badge warn">${pend.length}</span>` : ""}</h3><div id="pd">${pend.length ? pend.slice(0, 6).map((b) => bookingCard(b)).join("") + (pend.length > 6 ? `<p><a href="requests.html">عرض كل الطلبات (${pend.length})</a></p>` : "") : empty("check", "لا توجد طلبات معلّقة", "ستظهر هنا طلبات الحجز الجديدة لمرافقك.")}</div>
       <h3 class="sec">حجوزات اليوم في مرافقك</h3><div id="td">${todayAll.length ? todayAll.map((b) => bookingCard(b)).join("") : '<p class="sub">لا توجد حجوزات اليوم.</p>'}</div>` : ""}
-    <h3 class="sec">حجوزاتي القادمة</h3><div id="mu">${myUp.length ? myUp.slice(0, 5).map((b) => bookingCard(b, { hideBooker: true })).join("") + (myUp.length > 5 ? '<p><a href="my.html">عرض كل حجوزاتي</a></p>' : "") : empty("calendar", "لا توجد حجوزات قادمة", "احجز مرفقاً لحصة قادمة.")}<div class="acts mt"><a class="btn" href="book.html">${ico("plus")}حجز جديد</a></div></div>
-    <h3 class="sec">اختصارات</h3><div class="grid">${reg("book.html", "plus", 0, "حجز جديد", "التاريخ والمرفق والحصص والأدوات.")}${reg("my.html", "calendar", 1, "حجوزاتي", "القادمة والسابقة والملغاة.")}${c.isMgr ? reg("schedule.html", "grid", 3, "جدول المرافق", "من يحجز أي حصة اليوم.") + reg("stats.html", "chart", 4, "الإحصائيات", "الأكثر زيارة والأكثر تفعيلاً.") + reg("settings.html", "gear", 2, "الإعدادات", c.isAdmin ? "المرافق والحصص وقواعد الحجز." : "إعدادات الحجز لمرافقك.") : ""}</div>`;
+    ${c.asCoord ? "" : `<h3 class="sec">حجوزاتي القادمة</h3><div id="mu">${myUp.length ? myUp.slice(0, 5).map((b) => bookingCard(b, { hideBooker: true })).join("") + (myUp.length > 5 ? '<p><a href="my.html">عرض كل حجوزاتي</a></p>' : "") : empty("calendar", "لا توجد حجوزات قادمة", "احجز مرفقاً لحصة قادمة.")}<div class="acts mt"><a class="btn" href="book.html">${ico("plus")}حجز جديد</a></div></div>`}
+    <h3 class="sec">اختصارات</h3><div class="grid">${c.asCoord ? reg("requests.html", "inbox", 0, "طلبات الحجز", "اعتماد الطلبات أو رفضها.") : reg("book.html", "plus", 0, "حجز جديد", "التاريخ والمرفق والحصص والأدوات.") + reg("my.html", "calendar", 1, "حجوزاتي", "القادمة والسابقة والملغاة.")}${c.isMgr ? reg("schedule.html", "grid", 3, "جدول المرافق", "من يحجز أي حصة اليوم.") + reg("stats.html", "chart", 4, "الإحصائيات", "الأكثر زيارة والأكثر تفعيلاً.") + reg("settings.html", "gear", 2, "الإعدادات", c.isAdmin ? "المرافق والحصص وقواعد الحجز." : "إعدادات الحجز لمرافقك.") : ""}</div>`;
   bkActions(m, () => location.reload());
 });

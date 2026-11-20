@@ -127,10 +127,14 @@ async function boot(page, render, o = {}) {
   let who;
   try { who = await rpc("fb_whoami"); } catch (e) { console.error(e); fail(/function .* does not exist|schema cache|Could not find/i.test(String(e.message)) ? "لم يُنفَّذ سكربت قاعدة البيانات الخاص بالنظام بعد (supabase/migrations/0101_facility_booking.sql)." : "تعذر الاتصال بالخادم أو التحقق من حسابك."); return; }
   if (!who) { await doLogout("login.html?e=nostaff"); return; }
-  const isAdmin = who.is_admin === true, isCoord = (who.facility_ids || []).length > 0, isMgr = isAdmin || isCoord;
+  let isAdmin = who.is_admin === true, isCoord = (who.facility_ids || []).length > 0, isMgr = isAdmin || isCoord;
+  // تبديل الدور: منسق الحجز يختار بين لوحة المنسق (الطلبات والجدول والإحصائيات والإدارة) ولوحة المعلم (الحجز وحجوزاتي)
+  const canSwitch = isMgr, view = window.RoleSwitch ? RoleSwitch.view("facility_booking", session.user.id, canSwitch) : "coord", asCoord = canSwitch && view === "coord";
+  if (canSwitch && !asCoord) { isAdmin = false; isCoord = false; isMgr = false; }
   if (o.mgr && !isMgr) { location.replace("dashboard.html"); return; }
-  const ctx = { who, isAdmin, isCoord, isMgr, uid: session.user.id, role: isAdmin ? "مدير النواة الرقمية" : isCoord ? "منسق الحجز" : "المعلم" };
-  const items = NAV.filter((n) => !n[4] || isMgr);
+  if (asCoord && ["book.html", "my.html"].includes(page)) { location.replace("dashboard.html"); return; }
+  const ctx = { who, isAdmin, isCoord, isMgr, canSwitch, view, asCoord, uid: session.user.id, role: canSwitch && !asCoord ? "المعلم" : isAdmin ? "مدير النواة الرقمية" : isCoord ? "منسق الحجز" : "المعلم" };
+  const items = NAV.filter((n) => (asCoord ? n[4] || n[0] === "dashboard.html" : !n[4] || isMgr));
   const cur = NAV.find((n) => n[0] === page) || [page, o.title || "لوحة التحكم", "grid", o.desc || ""];
   shell.innerHTML =
     `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a><span class="vdiv"></span>${coreBlock()}${headMoe}</div></div>
@@ -159,6 +163,7 @@ async function boot(page, render, o = {}) {
   $("#out").onclick = (e) => { e.preventDefault(); doLogout(); };
   // الإشعارات: طلبات تنتظر اعتمادي (للمنسق والمدير) وقرارات على حجوزاتي؛ المقروء يُحفظ في هذا المتصفح
   let fbOld = 0; try { fbOld = +localStorage.getItem("fb-ntf-seen-" + session.user.id) || 0; } catch (e) {}
+  if (window.RoleSwitch) RoleSwitch.mount({ sys: "facility_booking", uid: session.user.id, can: canSwitch, view, home: { coord: "dashboard.html", teacher: "dashboard.html" }, teacherDesc: "حجز المرافق وحجوزاتي", coordDesc: "اعتماد الطلبات والجدول والإحصائيات والإدارة" });
   ubMount({ key: "fb", uid: session.user.id, allUrl: "inbox.html", load: async () => {
     const since = addDays(todayISO(), -14), N = [];
     const [mg, mine] = await Promise.all([isMgr ? rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).catch(() => []) : [], rpc("fb_bookings_list", { p_mode: "mine", p_from: since }).catch(() => [])]);
