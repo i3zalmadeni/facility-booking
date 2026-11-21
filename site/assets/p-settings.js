@@ -1,19 +1,23 @@
 // الإعدادات: المرافق (مدير النواة ومنسق المرفق)، الحصص وأزمنتها وقواعد الحجز (مدير النواة)
 boot("settings.html", async (m, c) => {
-  const TABS = [["fac", "المرافق"], ...(c.isAdmin ? [["per", "الحصص والأزمنة"], ["gen", "قواعد الحجز"]] : [])];
+  const TABS = SET_TABS.filter((x) => c.asCoord || x[0] === "fac").map((x) => x[0]);
   let tab = "fac", F = (await rpc("fb_my_facilities")) || [];
   const STAFF = c.isAdmin ? ((await rpc("fb_staff_options").catch(() => [])) || []) : [];
   const sopts = (sel) => `<option value="">— غير محدد —</option>` + STAFF.map((u) => `<option value="${u.id}"${u.id === sel ? " selected" : ""}>${esc(u.name)}</option>`).join("");
   const coreFac = (window.CORE_URL || "#") + "facilities.html";
-  const draw = () => { m.querySelector("#tabs").innerHTML = TABS.map(([k, l]) => `<button data-t="${k}" class="${k === tab ? "on" : ""}">${l}</button>`).join(""); ({ fac: drawFac, per: drawPer, gen: drawGen })[tab](); };
-  m.innerHTML = head("إدارة البوابة", c.isAdmin ? "ما يُفعَّل للحجز وأزمنة الحصص وقواعد الحجز." : "إعدادات الحجز للمرافق التي تنسقها.") + '<div class="tabs" id="tabs"></div><div id="pn"></div>';
-  $("#tabs").onclick = (e) => { const b = e.target.closest("[data-t]"); if (b) { tab = b.dataset.t; draw(); } };
+  m.innerHTML = '<div id="pn"></div>';
+  const drawAnn = () => {   // الإعلانات خطوة مستقلة في «إدارة البوابة» بدل بطاقة أسفل الإعدادات
+    const pn = $("#pn"); pn.onchange = null; pn.onclick = null;
+    if (!window.PK) { pn.innerHTML = '<p class="err">تعذر تحميل أداة الإعلانات.</p>'; return; }
+    pn.innerHTML = '<section class="pk-card"><div data-pk="p"></div></section>';
+    PK.announcementsAdmin($('[data-pk="p"]', pn), { sb, scope: "portal", system: "facility_booking", onChange: () => { const b = document.getElementById("pk-ann"); if (b) b.remove(); PK.mountAnnouncements({ sb, system: "facility_booking", page: "all", before: ".pagebar" }); } });
+  };
   const saveFac = async (id, patch) => { const { error } = await sb.from("fb_facility_settings").upsert({ facility_id: id, ...patch, updated_at: new Date().toISOString() }, { onConflict: "facility_id" }); if (error) throw new Error(mapErr(error)); Object.assign(F.find((f) => f.id === id), patch); };
 
   // ----- المرافق -----
   function drawFac() {
     const pn = $("#pn");
-    pn.innerHTML = `<div class="note">منسق الحجز لكل مرفق هو <b>المسؤول الرئيسي أو البديل</b> المسجّل للمرفق في سجل المرافق بالنواة الرقمية. ${c.isAdmin ? "يمكنك تعيينهما من الجدول أدناه، ويظهر لهما «طلبات الحجز» و«جدول المرافق» فور التعيين." : `لتغييره راجع مدير النواة.`} المرفق غير المفعّل لا يظهر للمعلمين في الحجز.</div>
+    pn.innerHTML = `<div class="note">منسق الحجز لكل مرفق هو <b>المسؤول الرئيسي أو البديل</b> المسجّل للمرفق في سجل المرافق بالنواة الرقمية. ${c.isAdmin ? "يمكنك تعيينهما من الجدول أدناه، ويظهر لهما قسم «مرفقي» فور التعيين لاعتماد حجوزاته ومتابعة جدوله." : `لتغييره راجع منسق البوابة.`} المرفق غير المفعّل لا يظهر للمعلمين في الحجز.</div>
       ${c.isAdmin ? `<div class="bar"><button class="btn sec sm" id="all1">تفعيل كل المرافق</button><button class="btn sec sm" id="all0">إيقاف الكل</button></div>` : ""}
       <div class="tw"><table><thead><tr><th>المرفق</th><th>المبنى</th><th>المنسق</th><th>مفعّل للحجز</th><th>اعتماد تلقائي</th><th>أقصى زوار</th><th></th></tr></thead><tbody>${F.map((f) => `<tr data-id="${f.id}"><td><b>${esc(f.name)}</b><br><small class="sub">${esc(f.type || "")}${f.status === "closed" ? " · مغلق في النواة" : ""}</small></td><td>${esc(f.building || "—")}</td><td>${c.isAdmin ? `<select data-co="primary" aria-label="المنسق الرئيسي">${sopts(f.primary_id)}</select><select data-co="backup" aria-label="المنسق البديل" style="margin-top:4px">${sopts(f.backup_id)}</select><small class="sub">الرئيسي / البديل</small>` : ((f.coordinators || []).map(esc).join("، ") || '<span class="err">غير محدد</span>')}</td>
         <td><label class="tgl"><input type="checkbox" data-k="is_bookable" ${f.is_bookable ? "checked" : ""}><span></span></label></td>
@@ -74,5 +78,5 @@ boot("settings.html", async (m, c) => {
       e2 ? toast(mapErr(e2), true) : toast("تم حفظ القواعد");
     };
   }
-  draw();
-}, { mgr: true });
+  subTabs(TABS, (k) => { tab = k; return ({ fac: drawFac, per: drawPer, gen: drawGen, ann: drawAnn })[k](); });
+});

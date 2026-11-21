@@ -14,7 +14,7 @@ boot("book.html", async (m, c) => {
   const pre = new URLSearchParams(location.search).get("f");
   let date = firstOpen(), fac = F.find((x) => x.id === pre) || F[0], sel = new Set(), avail = {}, tk = 0;
 
-  m.innerHTML = head("حجز مرفق", "اختر التاريخ والمرفق ثم الحصص المطلوبة. يصلك قرار المنسق في صفحة حجوزاتي.") +
+  m.innerHTML = head("حجز مرفق", "اختر التاريخ والمرفق ثم الحصص المطلوبة. يصلك قرار المنسق في «مكتبي».") +
     `<div class="card"><h3 class="sec" style="margin-top:0">1. التاريخ والمرفق</h3><div class="fg">
       <div><label for="d">التاريخ</label><input type="date" id="d" min="${today}" max="${maxDate}" value="${date}"><p class="sub" id="dl" style="margin:4px 0 0"></p></div>
       <div><label for="f">المرفق</label><select id="f">${F.map((x) => `<option value="${x.id}" ${x.id === fac.id ? "selected" : ""}>${esc(x.name)}${x.type ? " · " + esc(x.type) : ""}</option>`).join("")}</select></div></div><div id="fc"></div></div>
@@ -85,7 +85,7 @@ boot("book.html", async (m, c) => {
     try {
       const r = await rpc("fb_create_booking", { p_facility: fac.id, p_date: date, p_periods: [...sel], p_visitors: +$("#v").value, p_purpose: $("#pu").value, p_equipment: equipment, p_needs_help: $("#h").checked, p_help_note: $("#hn").value });
       toast(r.status === "approved" ? "تم الحجز واعتماده" : "أُرسل طلب الحجز إلى منسق المرفق");
-      setTimeout(() => (location.href = "my.html"), 900);
+      setTimeout(() => (location.href = "dashboard.html"), 900);
     } catch (e) { toast(mapErr(e), true); go.textContent = "إرسال الحجز"; await loadAvail(); }
   };
   drawDate(); drawFac(); await loadAvail();

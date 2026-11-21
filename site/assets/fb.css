@@ -279,3 +279,50 @@ header.dash .idl .moe{padding-inline-start:14px}
 .pgchip b{font-size:.86rem;line-height:1.5}.pgchip small{font-size:.74rem;opacity:.85}.pgchip em{font-style:normal;font-size:.76rem;font-weight:700}
 .pgno{color:var(--muted)}.pgt th.tdh{box-shadow:inset 0 -3px 0 var(--gold)}
 .lgd span i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-inline-end:6px;vertical-align:-1px}
+
+/* ===== نمط لوحة التحكم الموحد: أيقونة القسم في الشريط الأبيض، والشريط الفرعي، ورأس التبويب الفرعي ===== */
+.pb-t h1{display:flex;align-items:center;gap:10px}
+.pb-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--brandsoft);flex:none}
+.pb-ic .ico,.pb-ic svg{width:20px;height:20px;stroke:var(--brand2);margin:0}
+.sbar{background:var(--surface);border-bottom:1px solid var(--line)}
+.subnav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+.subnav::-webkit-scrollbar{display:none}
+.subnav a{flex:none;display:inline-flex;align-items:center;gap:6px;padding:11px 10px;color:var(--ink2);font-weight:700;text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px;transition:color .2s,background .2s}
+.subnav a .ico,.subnav a svg{width:17px;height:17px;margin:0}
+.subnav a:hover{color:var(--brand2);background:var(--soft)}
+.subnav a.on{color:var(--brand2);border-bottom-color:var(--gold)}
+.subnav a:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.sbar .subnav a .bdg{background:#f0b34a;color:#3b2a06;border-color:transparent;margin-inline-start:4px}
+.shd{padding-top:24px}
+.shd h2{margin:0;font-size:1.2rem;font-weight:800}
+.shd p{margin:4px 0 14px}
+main.solo{padding-top:24px}
+@media print{.sbar,.shd{display:none!important}}
+/* أزرار التصفية والعروض داخل الصفحة بشكل تبويبات الشريط الفرعي */
+#shell .tabs{gap:2px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+#shell .tabs::-webkit-scrollbar{display:none}
+#shell .tabs button{flex:none;background:none;border:0;border-bottom:3px solid transparent;border-radius:0;padding:9px 12px;margin-bottom:-1px;color:var(--ink2);font-weight:700;white-space:nowrap}
+#shell .tabs button:hover{color:var(--brand2);background:var(--soft)}
+#shell .tabs button.on{background:none;color:var(--brand2);border-bottom-color:var(--gold)}
+/* الرئيسية: مؤشرات قابلة للنقر ونافذة لكل قسم */
+a.kpa{text-decoration:none;color:inherit}
+.alert+.grid,.alert+.alert{margin-top:12px}
+.fbws{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px;margin-top:16px}
+.fbw{display:flex;flex-direction:column;gap:10px;margin:0}
+.fbw-h{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.fbw-h b{display:block;font-weight:800;color:var(--brand2)}.fbw-h small{color:var(--ink2);font-size:.82rem}
+.fbw-go{margin-inline-start:auto;font-size:.82rem;font-weight:700;color:var(--brand2);white-space:nowrap}
+.fbw-r{display:flex;flex-direction:column}
+.fbw-r a{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 4px;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.fbw-r a:hover{background:var(--soft)}
+.fbw-r b{font-size:1.05rem;font-weight:800;color:var(--brand2)}
+.fbw-r b.warn{color:#b26a00}.fbw-r b.bad{color:#c0392b}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]) .fbw-r b.warn{color:#f6c25e}html:not([data-theme="light"]) .fbw-r b.bad{color:#f2939c}}
+/* المؤشرات على الجوال: عمودان */
+@media (max-width:760px){.kgrid2{grid-template-columns:1fr 1fr;gap:10px}.kgrid2 .kpi{padding:12px;gap:10px}.kgrid2 .kpi .ic{width:38px;height:38px}.kgrid2 .kpi b{font-size:1.5rem}.kgrid2 .kpi span{font-size:.78rem}}
+/* النمط الداكن: الترويسة بخلفية فاتحة ثابتة في core.css (كما أُصلح في انضباطي) */
+@media (prefers-color-scheme:dark){
+  html:not([data-theme="light"]) header{background:linear-gradient(to left,#1b2a2c 0%,#152833 22%,#11242f 55%,#0f2836 100%)}
+  html:not([data-theme="light"]) .kpi .ic{background:rgba(255,255,255,.07)}
+  html:not([data-theme="light"]) .err{color:#f2939c}
+}

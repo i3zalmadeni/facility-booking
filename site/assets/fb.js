@@ -65,7 +65,6 @@ function modal(html, wide) {
   modalX(ov.firstChild, close);
   document.body.appendChild(ov); return { el: ov.firstChild, close };
 }
-const head = (t, s) => `<h2>${esc(t)}</h2>${s ? `<p class="sub">${esc(s)}</p>` : ""}`;
 const empty = (icon, t, s) => `<div class="card empty"><div class="big">${ico(icon)}</div><b>${esc(t)}</b>${s ? `<p class="sub">${esc(s)}</p>` : ""}</div>`;
 const badge = (st) => { const [l, c] = STATUS[st] || [st, ""]; return `<span class="badge ${c}">${l}</span>`; };
 
@@ -106,17 +105,40 @@ function bkActions(root, onDone) {
   });
 }
 
-// ===== الهيكل: ترويسة لوحة التحكم بنمط أنظمة النواة =====
-const NAV = [
-  ["dashboard.html", "مكتبي الإلكتروني", "home", "ما يخصك الآن: طلباتك وجدولك", null],
-  ["book.html", "حجز جديد", "plus", "اختر التاريخ والمرفق والحصص", null],
-  ["my.html", "حجوزاتي", "calendar", "حجوزاتك القادمة والسابقة", null],
-  ["myfac.html", "حجوزات مرفقي", "inbox", "الحجوزات على المرافق التي أنت مسؤولها: اعتماد أو رفض", "own", "pending_total"],
-  ["requests.html", "طلبات الحجز", "inbox", "طلبات المرافق التي تنسقها: اعتماد أو رفض", "mgr", "pending_total"],
-  ["schedule.html", "جدول المرافق", "grid", "من يحجز أي حصة في كل مرفق خلال اليوم", "mgr"],
-  ["stats.html", "الإحصائيات", "chart", "الأكثر زيارة والأكثر تفعيلاً", "mgr"],
-  ["settings.html", "إدارة البوابة", "gear", "المرافق والحصص وقواعد الحجز", "mgr"],
+// ===== الهيكل: نمط لوحة التحكم الموحد =====
+// الشريط الداكن: أقسام (SECTIONS)، والشريط الفرعي: صفحات القسم (NAV).
+// الأدوار: coord = لوحة منسق البوابة (مدير النواة، وحده يبدّل بين اللوحتين)؛ teach = لوحة المعلم؛ own = مسؤول المرفق (الرئيسي أو البديل) بلا تبديل.
+const SECTIONS = [
+  ["home", "الرئيسية", "grid", "نظرة شاملة على الحجوزات والمرافق، مع الإحصائيات"],
+  ["new", "حجز جديد", "plus", "اختر التاريخ والمرفق والحصص"],
+  ["book", "الحجوزات", "calendar", "طلبات الحجز وجدول المرافق اليومي"],
+  ["own", "مرفقي", "building", "حجوزات المرافق التي أنت مسؤولها: الطلبات والجدول والإحصائيات والإعدادات"],
+  ["admin", "إدارة البوابة", "gear", "إعدادات تُضبط في بداية العام بخطوات مرقمة، وتبقى متاحة للتعديل"],
 ];
+// تبويبات «إدارة البوابة» داخل settings.html: [المفتاح، الاسم، الأيقونة، الوصف، الدور]
+const SET_TABS = [
+  ["fac", "المرافق ومنسقوها", "building", "ما يُفعَّل للحجز، ومنسق كل مرفق، والاعتماد التلقائي وتعليمات الحجز", "coord"],
+  ["per", "الحصص والأزمنة", "clock", "بداية كل حصة ونهايتها، وما يُتاح منها للحجز", "coord"],
+  ["gen", "قواعد الحجز", "list", "مدة الحجز المسبق، وعدد الحصص في الحجز الواحد، وأيام الإغلاق", "coord"],
+  ["ann", "الإعلانات", "bell", "إعلانات البوابة التي تظهر أعلى لوحة التحكم", "coord"],
+];
+// [الرابط، الاسم، الأيقونة، الوصف، الدور، القسم، الشارة]
+const NAV = [
+  ["dashboard.html", "نظرة عامة", "grid", "ما يحتاج قرارك، وحجوزات اليوم، وحالة المرافق والإحصائيات", "coord", "home"],
+  ["stats.html", "الإحصائيات", "chart", "الأكثر زيارة والأكثر تفعيلاً، والتوزيع حسب الحصة واليوم", "coord", "home"],
+  ["dashboard.html", "مكتبي", "home", "حجوزاتي القادمة والسابقة، وما ينتظر قرار المنسق", "teach", "home"],
+  ["book.html", "حجز جديد", "plus", "اختر التاريخ والمرفق والحصص", "teach", "new"],
+  ["requests.html", "الطلبات", "inbox", "طلبات الحجز على المرافق: اعتماد أو رفض مع ذكر السبب", "coord", "book", "pending_total"],
+  ["schedule.html", "جدول المرافق", "grid", "من يحجز أي حصة في كل مرفق خلال اليوم", "coord", "book"],
+  ["myfac.html", "الطلبات", "inbox", "الحجوزات على المرافق التي أنت مسؤولها: اعتماد أو رفض", "own", "own", "pending_total"],
+  ["schedule.html", "الجدول", "grid", "حجوزات مرافقك في اليوم المختار", "own", "own"],
+  ["stats.html", "الإحصائيات", "chart", "زيارات مرافقك ونسبة تفعيلها", "own", "own"],
+  ["settings.html?tab=fac", "إعدادات مرفقي", "gear", "التفعيل للحجز، والاعتماد التلقائي، وأقصى زوار، وتعليمات الحجز", "own", "own"],
+  ...SET_TABS.map(([k, n, i, d, r]) => ["settings.html?tab=" + k, n, i, d, r, "admin"]),
+];
+let FB_SUB = false;   // للصفحة شريط فرعي: عنوانها ووصفها في رأس التبويب الفرعي
+// عنوان الصفحة ووصفها: لا يُكرَّر عنوان الشريط الأبيض، فيُحدَّث الوصف فقط (رأس التبويب الفرعي أو الشريط الأبيض)
+const head = (t, s) => { const d = FB_SUB ? $("#shD") : $(".pb-d"); if (d && s) d.textContent = s; return ""; };
 async function boot(page, render, o = {}) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { location.replace("login.html?next=" + encodeURIComponent(location.pathname.split("/").pop() + location.search)); return; }
@@ -128,28 +150,41 @@ async function boot(page, render, o = {}) {
   let who;
   try { who = await rpc("fb_whoami"); } catch (e) { console.error(e); fail(/function .* does not exist|schema cache|Could not find/i.test(String(e.message)) ? "لم يُنفَّذ سكربت قاعدة البيانات الخاص بالنظام بعد (supabase/migrations/0101_facility_booking.sql)." : "تعذر الاتصال بالخادم أو التحقق من حسابك."); return; }
   if (!who) { await doLogout("login.html?e=nostaff"); return; }
-  let isAdmin = who.is_admin === true, isCoord = (who.facility_ids || []).length > 0, isMgr = isAdmin || isCoord;
-  // تبديل الدور: منسق الحجز يختار بين لوحة المنسق (الطلبات والجدول والإحصائيات والإدارة) ولوحة المعلم (الحجز وحجوزاتي)
-  const canSwitch = isMgr, view = window.RoleSwitch ? RoleSwitch.view("facility_booking", session.user.id, canSwitch) : "coord", asCoord = canSwitch && view === "coord";
-  if (canSwitch && !asCoord) { isAdmin = false; isCoord = false; isMgr = false; }
-  // لوحة المعلم: من هو مسؤول (رئيسي أو بديل) عن مرفق يرى «حجوزات مرفقي» لاعتماد حجوزات مرافقه فقط
-  const myFac = who.facility_ids || [], ownFac = !asCoord && myFac.length > 0;
-  if (o.mgr && !isMgr) { location.replace("dashboard.html"); return; }
-  if (o.own && !ownFac) { location.replace(asCoord ? "requests.html" : "dashboard.html"); return; }
-  if (asCoord && ["book.html", "my.html"].includes(page)) { location.replace("dashboard.html"); return; }
-  const ctx = { who, isAdmin, isCoord, isMgr, canSwitch, view, asCoord, ownFac, myFac, uid: session.user.id, role: canSwitch && !asCoord ? "المعلم" : isAdmin ? "مدير النواة الرقمية" : isCoord ? "منسق الحجز" : "المعلم" };
-  const items = NAV.filter((n) => (n[4] === "own" ? ownFac : asCoord ? n[4] || n[0] === "dashboard.html" : !n[4] || isMgr));
-  const cur = NAV.find((n) => n[0] === page) || [page, o.title || "لوحة التحكم", "grid", o.desc || ""];
+  // تبديل الدور لمنسق البوابة (مدير النواة) وحده. مسؤول المرفق لا يبدّل: لوحته لوحة المعلم ومعها قسم «مرفقي»
+  const canSwitch = who.is_admin === true, view = window.RoleSwitch ? RoleSwitch.view("facility_booking", session.user.id, canSwitch) : "coord", asCoord = canSwitch && view === "coord";
+  const myFac = who.facility_ids || [], ownFac = !canSwitch && myFac.length > 0;
+  const isAdmin = asCoord, isCoord = ownFac, isMgr = isAdmin || isCoord;
+  const ctx = { who, isAdmin, isCoord, isMgr, canSwitch, view, asCoord, ownFac, myFac, uid: session.user.id, role: asCoord ? "منسق البوابة" : ownFac ? "منسق مرفق" : "المعلم" };
+  const ok = (r) => (r === "coord" ? asCoord : r === "teach" ? !asCoord : r === "own" ? ownFac : false);
+  const vis = NAV.filter((n) => ok(n[4]));
+  const qTab = new URLSearchParams(location.search).get("tab");
+  const base = (h) => h.split("?")[0];
+  const cur = page === "settings.html" ? vis.find((n) => n[0] === "settings.html?tab=" + qTab) || vis.find((n) => base(n[0]) === page) : vis.find((n) => n[0] === page);
+  if (!cur && page !== "inbox.html") {   // صفحة ليست لهذا الدور: يُحوَّل إلى ما يقابلها
+    const alt = { "requests.html": ownFac ? "myfac.html" : null, "myfac.html": asCoord ? "requests.html" : null }[page];
+    location.replace(alt || "dashboard.html"); return;
+  }
+  const secKey = cur ? cur[5] : null, sec = SECTIONS.find((x) => x[0] === secKey);
+  const secItems = (k) => vis.filter((n) => n[5] === k);
+  const secName = (k) => { const S = SECTIONS.find((x) => x[0] === k), it = secItems(k); return k === "home" ? (asCoord ? "الرئيسية" : "مكتبي") : it.length === 1 ? it[0][1] : S[1]; };
+  const subs = secKey ? secItems(secKey) : [], hasSub = subs.length > 1; FB_SUB = hasSub;
+  const pbTitle = sec ? secName(secKey) : o.title || "لوحة التحكم";
+  const pbDesc = hasSub ? sec[3] : cur ? cur[3] : o.desc || "";
+  const pbIcon = sec ? (secItems(secKey).length === 1 && secKey !== "home" ? secItems(secKey)[0][2] : secKey === "home" && !asCoord ? "home" : sec[2]) : "bell";
+  const bdg = (b) => (b ? `<span class="bdg" data-b="${b}"></span>` : "");
   shell.innerHTML =
     `<header class="dash"><div class="wrap top">${brandHTML("dashboard.html")}<div class="idl"><a class="sitelink" href="index.html">الموقع الإلكتروني</a><span class="vdiv"></span>${coreBlock()}${headMoe}</div></div>
      <div class="strip" aria-hidden="true"></div>
-     <div class="dnav"><div class="wrap dn"><button type="button" class="dmb" id="dmb" aria-expanded="false" aria-controls="dnavIn">${ico("menu")}<span class="dmb-t">القائمة</span><svg class="dmb-ch" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="dnav-in" id="dnavIn">${items.map(([h, n, e, t, , bd]) => `<a href="${h}" title="${esc(t)}" class="${h === page ? "on" : ""}" ${h === page ? 'aria-current="page"' : ""}>${ico(e)}${n}${bd ? `<span class="bdg" data-b="${bd}"></span>` : ""}</a>`).join("")}</div>
-     <div class="dwho">${ubBarHTML(who.name, "my.html")}</div></div></div></header>
-     <div class="pagebar"><div class="wrap pb"><div class="pb-t"><small>${esc(ctx.role)}</small><h1>${esc(cur[1])}</h1></div><p class="pb-d">${esc(cur[3])}</p>
+     <div class="dnav"><div class="wrap dn"><button type="button" class="dmb" id="dmb" aria-expanded="false" aria-controls="dnavIn">${ico("menu")}<span class="dmb-t">القائمة</span><svg class="dmb-ch" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="dnav-in" id="dnavIn">${SECTIONS.filter(([k]) => secItems(k).length).map(([k, , i, d]) => { const it = secItems(k), on = k === secKey, b = (it.find((x) => x[6]) || [])[6]; return `<a href="${it[0][0]}" data-sec="${k}" title="${esc(it.length > 1 ? d : it[0][3])}" class="${on ? "on" : ""}" ${on ? 'aria-current="page"' : ""}>${ico(k === "home" && !asCoord ? "home" : it.length === 1 && k !== "home" ? it[0][2] : i)}${esc(secName(k))}${bdg(b)}</a>`; }).join("")}</div>
+     <div class="dwho">${ubBarHTML(who.name, "dashboard.html")}</div></div></div></header>
+     <div class="pagebar"><div class="wrap pb"><div class="pb-t"><small>${esc(ctx.role)}</small><h1><span class="pb-ic">${ico(pbIcon)}</span><span id="pbH">${esc(pbTitle)}</span></h1></div><p class="pb-d">${esc(pbDesc)}</p>
      <div class="pb-u"><span id="pbTime"></span><button class="btn sec sm" id="pbRefresh" type="button">${ico("refresh")}تحديث</button></div></div></div>
-     <main class="wrap" id="main"></main>${footerHTML}`;
+     ${hasSub ? `<div class="sbar" role="navigation" aria-label="${esc(secName(secKey))}"><div class="wrap"><div class="subnav">${subs.map((n, i) => { const t = n[0].startsWith("settings.html?tab=") ? n[0].split("=")[1] : "", on = n === cur; return `<a href="${n[0]}" title="${esc(n[3])}" data-n="${esc(n[1])}" data-d="${esc(n[3])}"${t ? ` data-t="${t}"` : ""} class="${on ? "on" : ""}" ${on ? 'aria-current="page"' : ""}>${ico(n[2])}${secKey === "admin" ? i + 1 + ". " : ""}${esc(n[1])}${bdg(n[6])}</a>`; }).join("")}</div></div></div>
+     <div class="wrap shd"><h2 id="shT">${esc(cur[1])}</h2><p class="sub" id="shD">${esc(cur[3])}</p></div>` : ""}
+     <main class="wrap${hasSub ? "" : " solo"}" id="main"></main>${footerHTML}`;
+  { const a = document.querySelector(".sbar a.on"); if (a) a.scrollIntoView({ block: "nearest", inline: "center" }); }
+  document.title = (cur && hasSub ? cur[1] : pbTitle) + " – احجز مرفق";
   bindNav();
-  if (window.PK && page === "settings.html") PK.mountAdminSection({ sb, system: "facility_booking", central: false, after: "#main" });
   // قائمة الجوال: زر «القائمة» يفتح لائحة عمودية بكل التبويبات (على الشاشات العريضة يبقى الشريط الأفقي كما هو)
   (() => { const d = document.querySelector(".dnav"), b = document.getElementById("dmb"); if (!d || !b) return;
     const set = (o) => { d.classList.toggle("open", o); b.setAttribute("aria-expanded", o); };
@@ -167,7 +202,7 @@ async function boot(page, render, o = {}) {
   $("#out").onclick = (e) => { e.preventDefault(); doLogout(); };
   // الإشعارات: طلبات تنتظر اعتمادي (للمنسق والمدير) وقرارات على حجوزاتي؛ المقروء يُحفظ في هذا المتصفح
   let fbOld = 0; try { fbOld = +localStorage.getItem("fb-ntf-seen-" + session.user.id) || 0; } catch (e) {}
-  if (window.RoleSwitch) RoleSwitch.mount({ sys: "facility_booking", uid: session.user.id, can: canSwitch, view, home: { coord: "dashboard.html", teacher: "dashboard.html" }, teacherDesc: "حجز المرافق وحجوزاتي", coordDesc: "اعتماد الطلبات والجدول والإحصائيات والإدارة" });
+  if (window.RoleSwitch) RoleSwitch.mount({ sys: "facility_booking", uid: session.user.id, can: canSwitch, view, home: { coord: "dashboard.html", teacher: "dashboard.html" }, teacherDesc: "حجز جديد وحجوزاتي", coordDesc: "الطلبات والجدول والإحصائيات وإدارة البوابة" });
   ubMount({ key: "fb", uid: session.user.id, allUrl: "inbox.html", load: async () => {
     const since = addDays(todayISO(), -14), N = [];
     let [mg, mine] = await Promise.all([isMgr || ownFac ? rpc("fb_bookings_list", { p_mode: "manage", p_status: "pending" }).catch(() => []) : [], rpc("fb_bookings_list", { p_mode: "mine", p_from: since }).catch(() => [])]);
@@ -176,9 +211,20 @@ async function boot(page, render, o = {}) {
     const old = (t) => (fbOld && +new Date(t) <= fbOld ? true : undefined);
     (mg || []).filter((b) => !b.mine).forEach((b) => N.push({ id: "p:" + b.id, t: b.created_at, read: old(b.created_at), tone: "warn", icon: "inbox", href: ownFac ? "myfac.html" : "requests.html", title: `طلب حجز جديد من ${b.booker}`, body: `${b.facility} · ${fmtDay(b.date)}` }));
     const W = { approved: ["check", "اعتُمد حجزك", "ok"], rejected: ["x", "اعتُذر عن حجزك", "bad"], cancelled: ["x", "أُلغي حجزك", "bad"] };
-    (mine || []).filter((b) => W[b.status] && b.decided_at && b.decided_by).forEach((b) => N.push({ id: "d:" + b.id + ":" + b.status, t: b.decided_at, read: old(b.decided_at), tone: W[b.status][2], icon: W[b.status][0], href: "my.html", title: `${W[b.status][1]}: ${b.facility}`, body: `${fmtDay(b.date)}${b.decision_note ? " · " + b.decision_note : ""}` }));
+    (mine || []).filter((b) => W[b.status] && b.decided_at && b.decided_by).forEach((b) => N.push({ id: "d:" + b.id + ":" + b.status, t: b.decided_at, read: old(b.decided_at), tone: W[b.status][2], icon: W[b.status][0], href: "dashboard.html", title: `${W[b.status][1]}: ${b.facility}`, body: `${fmtDay(b.date)}${b.decision_note ? " · " + b.decision_note : ""}` }));
     return N;
   } });
   const main = $("#main");
   try { await render(main, ctx); } catch (e) { console.error(e); main.innerHTML = `<p class="err">تعذر تحميل الصفحة: ${esc(mapErr(e))}</p>`; }
+}
+// تبويبات «إدارة البوابة»: مربوطة بالشريط الفرعي (data-t)، فلا يُرسم شريط تبويبات ثانٍ داخل الصفحة
+function subTabs(keys, onTab) {
+  const q = new URLSearchParams(location.search).get("tab"); let cur = keys.includes(q) ? q : keys[0];
+  const bar = document.querySelector(".sbar");
+  const go = async (k) => { cur = k;
+    $$("[data-t]", bar || document).forEach((a) => { const on = a.dataset.t === k; a.classList.toggle("on", on); on ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current");
+      if (on) { $("#shT") && ($("#shT").textContent = a.dataset.n); $("#shD") && ($("#shD").textContent = a.dataset.d); document.title = a.dataset.n + " – احجز مرفق"; } });
+    try { await onTab(k); } catch (e) { const pn = $("#pn"); if (pn) pn.innerHTML = `<p class="err">${esc(mapErr(e))}</p>`; } };
+  if (bar) $$("[data-t]", bar).forEach((a) => (a.onclick = (e) => { if (!keys.includes(a.dataset.t)) return; e.preventDefault(); history.replaceState(null, "", "?tab=" + a.dataset.t); go(a.dataset.t); }));
+  go(cur);
 }
